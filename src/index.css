@@ -71,152 +71,147 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* ────────────────────── DARK THEME (default) ────────────────────── */
 :root {
-  --radius: 0.65rem;
+  --radius: 0.7rem;
 
-  /* ── Primary: Deep Emerald ── */
-  --primary: #0A4A3C;
-  --primary-light: #1A6B5A;
-  --primary-dark: #07362C;
-  --primary-darker: #04231D;
-  --primary-foreground: #F7F6F2;
+  /* Primary — Gold (dominant) */
+  --primary: #C9A34A;
+  --primary-light: #E2C66D;
+  --primary-dark: #A8852E;
+  --primary-darker: #7A5E1A;
+  --primary-foreground: #0B1A16;
 
-  /* ── Accent: Refined Gold ── */
-  --gold: #D4AF37;
-  --gold-light: #E8C84A;
-  --gold-dark: #B8952E;
-  --gold-shine: #F5E08A;
+  /* Emerald Accent (secondary role) */
+  --emerald: #0F5A49;
+  --emerald-light: #1A7461;
+  --emerald-dark: #0B3F35;
 
-  /* ── Backgrounds: Sophisticated Dark ── */
-  --background: #0D1412;
-  --section: #131C19;
-  --card: #1A2824;
-  --card-hover: #233934;
-  --card-elevated: #2A433C;
+  /* Gold palette */
+  --gold: #C9A34A;
+  --gold-light: #E2C66D;
+  --gold-dark: #9C7432;
+  --gold-muted: #7A5E1A;
 
-  /* ── Text Colors ── */
-  --foreground: #F0EFEC;
-  --muted-foreground: #A8B5B0;
-  --muted: #2D3D38;
-  --disabled: #6B7A75;
+  /* Backgrounds — slightly cooler/darker for contrast */
+  --background: #060F0D;
+  --foreground: #F5F0E8;
+  --section: #0A1A16;
+  --card: #0E2420;
+  --card-hover: #152E28;
+  --card-foreground: #F5F0E8;
 
-  /* ── Buttons ── */
-  --primary-foreground: #F7F6F2;
-  --secondary: #2D4A42;
-  --secondary-foreground: #F0EFEC;
-  --secondary-hover: #3A5E54;
+  /* Popover */
+  --popover: #081512;
+  --popover-foreground: #F5F0E8;
 
-  /* ── Links ── */
-  --link: #D4AF37;
-  --link-hover: #E8C84A;
-  --link-visited: #B8952E;
+  /* Secondary — Emerald */
+  --secondary: #0F5A49;
+  --secondary-hover: #15705C;
+  --secondary-foreground: #F5F0E8;
 
-  /* ── Alerts ── */
-  --destructive: #C0392B;
-  --destructive-foreground: #FDFBF7;
-  --success: #27AE60;
-  --success-foreground: #FDFBF7;
-  --warning: #F1C40F;
-  --warning-foreground: #1E2A24;
-  --info: #2980B9;
-  --info-foreground: #FDFBF7;
+  /* Muted */
+  --muted: #0A1A16;
+  --muted-foreground: #8A9E98;
 
-  /* ── Borders ── */
-  --border: #2D4A42;
-  --border-light: #3E5F56;
-  --border-gold: #D4AF37;
+  /* Accent — Gold */
+  --accent: #C9A34A;
+  --accent-foreground: #060F0D;
 
-  /* ── Shadows ── */
-  --shadow-green: rgba(10, 74, 60, 0.35);
-  --shadow-gold: rgba(212, 175, 55, 0.2);
-  --shadow-elevated: rgba(0, 0, 0, 0.6);
+  /* Links */
+  --link: #E2C66D;
+  --link-hover: #F5DFA0;
+  --link-visited: #B58A3C;
 
-  /* ── Gradients ── */
-  --gradient-gold: linear-gradient(135deg, #B8952E, #D4AF37, #E8C84A);
-  --gradient-green: linear-gradient(180deg, #0A4A3C, #04231D);
-  --gradient-hero: linear-gradient(135deg, #04231D, #0A4A3C, #1A6B5A);
-  --gradient-cta: linear-gradient(90deg, #D4AF37, #E8C84A);
-  --gradient-card: linear-gradient(145deg, rgba(26, 40, 36, 0.9), rgba(35, 57, 52, 0.95));
+  /* Destructive */
+  --destructive: #D9534F;
+  --destructive-foreground: #F5F0E8;
 
-  /* ── Charts ── */
-  --chart-1: #0A4A3C;
-  --chart-2: #1A6B5A;
-  --chart-3: #D4AF37;
-  --chart-4: #E8C84A;
-  --chart-5: #B8952E;
+  /* Success */
+  --success: #1FA971;
+  --success-foreground: #060F0D;
 
-  /* ── Popover & Accent ── */
-  --popover: #1A2824;
-  --popover-foreground: #F0EFEC;
-  --accent: #D4AF37;
-  --accent-foreground: #F7F6F2;
+  /* Warning */
+  --warning: #E8B547;
+  --warning-foreground: #060F0D;
 
-  /* ── Sidebar ── */
-  --sidebar: #131C19;
-  --sidebar-foreground: #A8B5B0;
-  --sidebar-primary: #0A4A3C;
-  --sidebar-primary-foreground: #F0EFEC;
-  --sidebar-accent: #D4AF37;
-  --sidebar-accent-foreground: #0D1412;
-  --sidebar-border: #2D4A42;
+  /* Info */
+  --info: #2E8BC0;
+  --info-foreground: #F5F0E8;
+
+  /* Borders — gold-tinted */
+  --border: #3A2E14;
+  --border-light: #5C4820;
+  --border-gold: #C9A34A;
+
+  /* Input */
+  --input: #0A1A16;
+
+  /* Ring — gold */
+  --ring: #C9A34A;
+
+  /* Chart — gold-dominant */
+  --chart-1: #C9A34A;
+  --chart-2: #E2C66D;
+  --chart-3: #A8852E;
+  --chart-4: #1A7461;
+  --chart-5: #0F5A49;
+
+  /* Sidebar */
+  --sidebar: #060F0D;
+  --sidebar-foreground: #F5F0E8;
+  --sidebar-primary: #C9A34A;
+  --sidebar-primary-foreground: #060F0D;
+  --sidebar-accent: #0A1A16;
+  --sidebar-accent-foreground: #F5F0E8;
+  --sidebar-border: #3A2E14;
+  --sidebar-ring: #C9A34A;
+
+  /* Shadows */
+  --shadow-green: rgba(4, 37, 31, 0.5);
+  --shadow-gold: rgba(201, 163, 74, 0.35);
+  --shadow-gold-strong: rgba(201, 163, 74, 0.55);
+
+  /* Gradients */
+  --gradient-gold: linear-gradient(135deg, #7A5E1A, #C9A34A, #F0D88A);
+  --gradient-green: linear-gradient(135deg, #060F0D, #0B3F35, #1A7461);
+  --gradient-hero: linear-gradient(135deg, #060F0D, #0E2420, #1A2E14);
+  --gradient-cta: linear-gradient(135deg, #A8852E, #E2C66D);
+  --gradient-gold-subtle: linear-gradient(135deg, rgba(201,163,74,0.12), rgba(226,198,109,0.06));
 }
 
 /* ────────────────────── LIGHT THEME ────────────────────── */
 .dark {
-  /* Body */
-  --background: #F4F6F5;
-  --foreground: #1A2421;
-  --section: #FFFFFF;
-  --card: #FFFFFF;
-  --card-hover: #F0F3F2;
-  --card-elevated: #E6EBE9;
+  --background: #060F0D;
+  --foreground: #F5F0E8;
+  --section: #0A1A16;
+  --card: #0E2420;
+  --card-hover: #152E28;
 
-  /* Navbar */
-  --sidebar: #FFFFFF;
-  --sidebar-foreground: #3D4F4A;
-  --sidebar-primary: #0A4A3C;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #D4AF37;
-  --sidebar-accent-foreground: #1A2421;
-  --sidebar-border: #DCE3E0;
+  --sidebar: #060F0D;
+  --sidebar-foreground: #F5F0E8;
+  --sidebar-primary: #C9A34A;
+  --sidebar-primary-foreground: #060F0D;
+  --sidebar-accent: #0A1A16;
+  --sidebar-accent-foreground: #F5F0E8;
+  --sidebar-border: #3A2E14;
+  --sidebar-ring: #C9A34A;
 
-  /* Buttons */
-  --primary: #0A4A3C;
-  --primary-foreground: #FFFFFF;
-  --secondary: #E6EBE9;
-  --secondary-hover: #DCE3E0;
-  --secondary-foreground: #1A2421;
+  --primary: #C9A34A;
+  --primary-foreground: #060F0D;
+  --secondary: #0F5A49;
+  --secondary-hover: #15705C;
+  --secondary-foreground: #F5F0E8;
 
-  /* Text */
-  --muted-foreground: #5A6B66;
-
-  /* Borders */
-  --border: #DCE3E0;
-  --border-light: #E6EBE9;
-  --input: #DCE3E0;
-
-  /* Links */
-  --link: #0A4A3C;
-  --link-hover: #1A6B5A;
-
-  /* Shadows */
-  --shadow-green: rgba(10, 74, 60, 0.1);
-  --shadow-gold: rgba(212, 175, 55, 0.15);
-  --shadow-elevated: rgba(26, 36, 33, 0.08);
-
-  --popover: #FFFFFF;
-  --accent: #D4AF37;
-  --accent-foreground: #1A2421;
-
-  --sidebar-background: #FFFFFF;
-  --sidebar-foreground: #3D4F4A;
-  --sidebar-border: #DCE3E0;
+  --text: #F5F0E8;
+  --text-secondary: #C2B99A;
+  --muted-foreground: #8A9E98;
 }
 
 /* ────────────────────── BASE ────────────────────── */
 @layer base {
   * {
-    border-color: rgb(var(--border));
+    @apply border-border outline-ring/50;
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
@@ -226,92 +221,55 @@
   }
 
   html, body {
-    background-color: rgb(var(--background));
-    color: rgb(var(--foreground));
+    @apply bg-background text-foreground;
     font-family: system-ui, -apple-system, sans-serif;
     overflow-x: hidden;
     max-width: 100vw;
   }
 
-  /* Persian (Farsi) font */
   html[lang="fa"] body {
     font-family: "Vazirmatn", system-ui, -apple-system, sans-serif;
     direction: rtl;
   }
 
-  /* Persian (Farsi) font for toaster */
-  html[lang="fa"] .toaster {
-    font-family: "Vazirmatn", system-ui, -apple-system, sans-serif !important;
-    direction: rtl;
-  }
-
+  html[lang="fa"] .toaster,
   html[lang="fa"] .toaster [data-sonner-toast] {
     font-family: "Vazirmatn", system-ui, -apple-system, sans-serif !important;
     direction: rtl;
   }
 
-  /* Grid Pattern Background */
   .bg-grid-pattern {
     background-image: linear-gradient(to right, currentColor 1px, transparent 1px),
                       linear-gradient(to bottom, currentColor 1px, transparent 1px);
     background-size: 40px 40px;
-    color: #1a3d35;
+    color: rgba(201, 163, 74, 0.08);
   }
 
-  /* Custom Animations */
   @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
+  .animate-fadeIn { animation: fadeIn 0.6s ease-out forwards; }
 
-  .animate-fadeIn {
-    animation: fadeIn 0.6s ease-out forwards;
-  }
-
-  /* Accordion Animations */
   @keyframes accordion-down {
-    from {
-      height: 0;
-    }
-    to {
-      height: var(--radix-accordion-content-height);
-    }
+    from { height: 0; }
+    to   { height: var(--radix-accordion-content-height); }
   }
-
   @keyframes accordion-up {
-    from {
-      height: var(--radix-accordion-content-height);
-    }
-    to {
-      height: 0;
-    }
+    from { height: var(--radix-accordion-content-height); }
+    to   { height: 0; }
   }
+  .animate-accordion-down { animation: accordion-down 0.2s ease-out; }
+  .animate-accordion-up   { animation: accordion-up   0.2s ease-out; }
 
-  .animate-accordion-down {
-    animation: accordion-down 0.2s ease-out;
-  }
-
-  .animate-accordion-up {
-    animation: accordion-up 0.2s ease-out;
-  }
-
-  /* ─── Hero Gradient ─── */
   .hero-gradient {
     background: var(--gradient-hero);
   }
 
-  /* ─── Gold Glow Effect ─── */
   .gold-glow {
-    box-shadow: 0 0 20px var(--shadow-gold);
+    box-shadow: 0 0 28px var(--shadow-gold), 0 0 8px var(--shadow-gold-strong);
   }
 
-  /* ─── Gold Text Gradient ─── */
   .gold-text {
     background: var(--gradient-gold);
     -webkit-background-clip: text;
@@ -319,25 +277,23 @@
     background-clip: text;
   }
 
-  /* ─── CTA Button Gradient ─── */
   .btn-cta {
     background: var(--gradient-cta);
+    color: #060F0D;
+    font-weight: 600;
     transition: all 0.3s ease;
   }
-
   .btn-cta:hover {
-    filter: brightness(1.05);
-    box-shadow: 0 4px 15px var(--shadow-gold);
+    filter: brightness(1.1);
+    box-shadow: 0 4px 20px var(--shadow-gold-strong);
   }
 
-  /* ─── Card Hover Shadow ─── */
   .card-hover-effect {
     transition: all 0.3s ease;
   }
-
   .card-hover-effect:hover {
     background: var(--card-hover);
-    box-shadow: 0 4px 20px var(--shadow-green);
+    box-shadow: 0 4px 24px var(--shadow-gold), 0 2px 8px var(--shadow-green);
     border-color: var(--border-gold);
   }
 }
