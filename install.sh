@@ -7,6 +7,10 @@ DEST_DIR="/var/lib/pasarguard/templates/subscription"
 DEST_FILE="${DEST_DIR}/index.html"
 ENV_FILE="/opt/pasarguard/.env"
 
+# تنظیمات ریپازیتوری شخصی شما
+REPO_OWNER="PEDIHS"
+REPO_NAME="subscription-template"
+
 usage() {
   cat <<'EOF'
 Usage: install.sh [--lang en|fa|zh|ru] [--version latest|<tag>]
@@ -66,9 +70,10 @@ if [[ "${VERSION}" != "latest" ]]; then
   RELEASE_PATH="download/${VERSION}"
 fi
 
-URL="https://github.com/PasarGuard/subscription-template/releases/${RELEASE_PATH}/${LANG_CODE}.html"
+# تغییر آدرس به ریپازیتوری شخصی
+URL="https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/${RELEASE_PATH}/${LANG_CODE}.html"
 if [[ "${LANG_CODE}" == "fa" ]]; then
-  URL="https://github.com/PasarGuard/subscription-template/releases/${RELEASE_PATH}/index.html"
+  URL="https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/${RELEASE_PATH}/index.html"
 fi
 
 mkdir -p "${DEST_DIR}"
@@ -99,8 +104,8 @@ fi
 
 if command -v pasarguard >/dev/null 2>&1; then
   pasarguard restart
-  echo "Installed template (${LANG_CODE}, ${VERSION}) and restarted PasarGuard."
+  echo "✅ نصب قالب سفارشی (${LANG_CODE}, ${VERSION}) انجام شد و PasarGuard ری‌استارت گردید."
 else
-  echo "Installed template (${LANG_CODE}, ${VERSION}) at ${DEST_FILE}."
-  echo "pasarguard command not found, restart service manually."
+  echo "✅ قالب سفارشی (${LANG_CODE}, ${VERSION}) در مسیر ${DEST_FILE} نصب شد."
+  echo "⚠️ دستور pasarguard یافت نشد، سرویس را به‌صورت دستی ری‌استارت کنید."
 fi
