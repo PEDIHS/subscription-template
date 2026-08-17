@@ -92,17 +92,62 @@ if [[ "${LANG_CODE}" == "fa" ]]; then
   URL="https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/${RELEASE_PATH}/index.html"
 fi
 
+RAW_PREBUILT_BASE="https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/prebuilt"
+
 mkdir -p "${DEST_DIR}"
 TEMP_DIR="$(mktemp -d)"
 STAGED_FILE="$(mktemp "${DEST_DIR}/.subscription-template.XXXXXX")"
 
-if command -v wget >/dev/null 2>&1; then
-  wget -q --timeout=25 --tries=3 -O "${STAGED_FILE}" "${URL}"
-elif command -v curl >/dev/null 2>&1; then
-  curl -fsSL --connect-timeout 25 --retry 3 --retry-delay 2 "${URL}" -o "${STAGED_FILE}"
-else
+download_file() {
+  local source_url="$1"
+  local target_file="$2"
+
+  if command -v wget >/dev/null 2>&1; then
+    wget -q --timeout=25 --tries=3 -O "${target_file}" "${source_url}"
+  elif command -v curl >/dev/null 2>&1; then
+    curl -fsSL --connect-timeout 25 --retry 3 --retry-delay 2 "${source_url}" -o "${target_file}"
+  else
+    return 127
+  fi
+}
+
+download_prebuilt_fallback() {
+  local archive="${TEMP_DIR}/index.html.gz"
+  local part_file=""
+  local part=""
+
+  if ! command -v gzip >/dev/null 2>&1; then
+    echo "Error: gzip is required for the prebuilt fallback." >&2
+    return 1
+  fi
+
+  : > "${archive}"
+  for part in 00 01 02 03 04 05 06 07; do
+    part_file="${TEMP_DIR}/index.html.gz.part-${part}"
+    if ! download_file "${RAW_PREBUILT_BASE}/index.html.gz.part-${part}" "${part_file}"; then
+      echo "Error: failed to download prebuilt part ${part}." >&2
+      return 1
+    fi
+    cat "${part_file}" >> "${archive}"
+  done
+
+  gzip -t "${archive}"
+  gzip -dc "${archive}" > "${STAGED_FILE}"
+}
+
+if ! command -v wget >/dev/null 2>&1 && ! command -v curl >/dev/null 2>&1; then
   echo "Error: neither wget nor curl is installed." >&2
   exit 1
+fi
+
+if ! download_file "${URL}" "${STAGED_FILE}"; then
+  if [[ "${VERSION}" == "latest" && "${LANG_CODE}" == "fa" ]]; then
+    echo "Release asset is not available yet; downloading the prebuilt Persian template..."
+    download_prebuilt_fallback
+  else
+    echo "Error: release asset could not be downloaded for ${LANG_CODE} (${VERSION})." >&2
+    exit 1
+  fi
 fi
 
 if [[ ! -s "${STAGED_FILE}" ]] || ! grep -qi '<!doctype html' "${STAGED_FILE}"; then
