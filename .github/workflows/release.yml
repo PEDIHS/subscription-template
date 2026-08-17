@@ -4,10 +4,6 @@ on:
     release:
         types: [published]
     workflow_dispatch:
-    push:
-        branches: [main]
-        paths:
-            - .github/workflows/release.yml
 
 env:
     DEFAULT_FALLBACK_LANGUAGE: fa
@@ -60,6 +56,8 @@ jobs:
               uses: oven-sh/setup-bun@v2
               with:
                   bun-version: latest
+                  # if you want to disable cache explicitly:
+                  # no-cache: true
 
             - name: Install dependencies
               run: bun install --frozen-lockfile
@@ -88,7 +86,7 @@ jobs:
     publish:
         name: Attach assets to release
         needs: build
-        if: github.event_name == 'release' || github.event_name == 'push'
+        if: github.event_name == 'release'
         runs-on: ubuntu-latest
         steps:
             - name: Download all artifacts
@@ -99,8 +97,4 @@ jobs:
             - name: Publish release assets
               uses: softprops/action-gh-release@v2
               with:
-                  tag_name: ${{ github.event_name == 'push' && 'v3.0.0' || github.ref_name }}
-                  name: ${{ github.event_name == 'push' && 'v3.0.0' || github.event.release.name }}
-                  generate_release_notes: ${{ github.event_name == 'push' }}
-                  make_latest: true
                   files: release-assets/**/*.html
