@@ -4,16 +4,44 @@ on:
     release:
         types: [published]
     workflow_dispatch:
+    schedule:
+        - cron: '*/5 * * * *'
 
 env:
     DEFAULT_FALLBACK_LANGUAGE: fa
+    SCHEDULED_RELEASE_TAG: v3.0.0
 
 permissions:
     contents: write
 
+concurrency:
+    group: release-v3.0.0
+    cancel-in-progress: false
+
 jobs:
+    check-release:
+        name: Check scheduled release
+        runs-on: ubuntu-latest
+        outputs:
+            exists: ${{ steps.release.outputs.exists }}
+        steps:
+            - name: Check whether v3.0.0 already exists
+              id: release
+              env:
+                  GH_TOKEN: ${{ github.token }}
+              run: |
+                  if [ "${{ github.event_name }}" != "schedule" ]; then
+                    echo "exists=false" >> "$GITHUB_OUTPUT"
+                  elif gh release view "${{ env.SCHEDULED_RELEASE_TAG }}" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+                    echo "exists=true" >> "$GITHUB_OUTPUT"
+                  else
+                    echo "exists=false" >> "$GITHUB_OUTPUT"
+                  fi
+
     detect-languages:
         name: Detect languages
+        needs: check-release
+        if: needs.check-release.outputs.exists != 'true'
         runs-on: ubuntu-latest
         outputs:
             matrix: ${{ steps.languages.outputs.matrix }}
@@ -56,8 +84,6 @@ jobs:
               uses: oven-sh/setup-bun@v2
               with:
                   bun-version: latest
-                  # if you want to disable cache explicitly:
-                  # no-cache: true
 
             - name: Install dependencies
               run: bun install --frozen-lockfile
@@ -86,7 +112,7 @@ jobs:
     publish:
         name: Attach assets to release
         needs: build
-        if: github.event_name == 'release'
+        if: github.event_name == 'release' || github.event_name == 'schedule'
         runs-on: ubuntu-latest
         steps:
             - name: Download all artifacts
@@ -97,4 +123,8 @@ jobs:
             - name: Publish release assets
               uses: softprops/action-gh-release@v2
               with:
+                  tag_name: ${{ github.event_name == 'schedule' && env.SCHEDULED_RELEASE_TAG || github.ref_name }}
+                  name: ${{ github.event_name == 'schedule' && env.SCHEDULED_RELEASE_TAG || github.event.release.name }}
+                  generate_release_notes: ${{ github.event_name == 'schedule' }}
+                  make_latest: true
                   files: release-assets/**/*.html
