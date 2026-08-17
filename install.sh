@@ -13,7 +13,7 @@ ROLLBACK_FILE=""
 # تنظیمات ریپازیتوری شخصی شما
 REPO_OWNER="PEDIHS"
 REPO_NAME="subscription-template"
-PREBUILT_REF="dc1a274e5c9f88b8b20c4e6888bd82c26dc247dd"
+PREBUILT_REF="7bdd78a4e14f62ba06d50ed2d12f6b18d9c4e43f"
 
 cleanup() {
   [[ -n "${STAGED_FILE}" && -f "${STAGED_FILE}" ]] && rm -f "${STAGED_FILE}"
