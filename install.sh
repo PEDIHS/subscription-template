@@ -13,6 +13,7 @@ ROLLBACK_FILE=""
 # تنظیمات ریپازیتوری شخصی شما
 REPO_OWNER="PEDIHS"
 REPO_NAME="subscription-template"
+PREBUILT_REF="6e543f84430418b1087c0405eb0219936ac90e04"
 
 cleanup() {
   [[ -n "${STAGED_FILE}" && -f "${STAGED_FILE}" ]] && rm -f "${STAGED_FILE}"
@@ -92,7 +93,7 @@ if [[ "${LANG_CODE}" == "fa" ]]; then
   URL="https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/${RELEASE_PATH}/index.html"
 fi
 
-RAW_PREBUILT_BASE="https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/prebuilt"
+RAW_PREBUILT_BASE="https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${PREBUILT_REF}/prebuilt"
 
 mkdir -p "${DEST_DIR}"
 TEMP_DIR="$(mktemp -d)"
