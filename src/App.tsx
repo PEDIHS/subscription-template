@@ -4,9 +4,12 @@ import {
   Activity,
   Bell,
   CalendarDays,
+  ChevronDown,
   Database,
   RefreshCcw,
   ShieldCheck,
+  Sparkles,
+  Zap,
 } from 'lucide-react';
 import { useUserInfo, useConfigData, useChartData } from '@/hooks/useUserData';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -107,8 +110,6 @@ function App() {
     typeof headers?.['announce-url'] === 'string' && headers['announce-url'].trim()
       ? headers['announce-url']
       : null;
-  const hasAnnouncement = Boolean(announcementMessage?.trim() || announceUrl);
-
   const normalizedStatus = useMemo(() => {
     const status = String(effectiveData?.status || 'active').toLowerCase();
     return ['active', 'disabled', 'limited', 'expired', 'on_hold'].includes(status)
@@ -180,6 +181,7 @@ function App() {
 
   const statusStyle = statusConfig[normalizedStatus as keyof typeof statusConfig];
   const locale = i18n.language === 'fa' ? 'fa-IR' : i18n.language;
+  const isFa = i18n.language.startsWith('fa');
   const remainingTraffic = !effectiveData.data_limit
     ? '∞'
     : formatBytes(Math.max(0, effectiveData.data_limit - (effectiveData.used_traffic || 0)));
@@ -194,16 +196,20 @@ function App() {
   const hasChart = !chartError;
   const chartUsage = getChartUsageData(chartData?.stats);
 
+  const scrollToConnections = () => {
+    document.getElementById('connection-links')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   return (
     <Layout>
-      <div className="relative min-h-[100svh] overflow-hidden">
-        <div className="ios-ambient" aria-hidden="true" />
+      <div className="treasury-shell relative min-h-[100svh] overflow-hidden">
+        <div className="treasury-ambient" aria-hidden="true" />
 
-        <header className="ios-navigation">
+        <header className="treasury-navigation">
           <div className="ios-container flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <p className="ios-eyebrow">{t(`status.${normalizedStatus}`)}</p>
-              <h1 className="ios-large-title">{t('dashboard.title')}</h1>
+            <div className="treasury-brand" aria-label="ganj">
+              <span className="treasury-brand-shield"><ShieldCheck className="size-[18px]" /></span>
+              <span>ganj</span>
             </div>
             <div className="flex shrink-0 items-center gap-2">
               <LanguageSwitcher />
@@ -212,138 +218,128 @@ function App() {
           </div>
         </header>
 
-        <main className="ios-container ios-page-stack">
-          <section className="ios-profile-row animate-fadeIn" aria-label={effectiveData.username}>
-            <div className="ios-account-icon" aria-hidden="true">
-              <ShieldCheck className="size-5" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p dir="ltr" title={effectiveData.username} className="truncate text-start text-[15px] font-semibold text-foreground">
-                {effectiveData.username}
-              </p>
-              <OnlineBadge lastOnline={effectiveData.online_at} showText />
+        <main className="ios-container treasury-page">
+          <section className="treasury-titlebar animate-fadeIn">
+            <div className="min-w-0">
+              <p className="treasury-kicker"><Sparkles className="size-3.5" /> {isFa ? 'فضای امن شما' : 'Your secure space'}</p>
+              <h1>{isFa ? 'اشتراک من' : t('dashboard.title')}</h1>
+              <div className="treasury-identity">
+                <span className={cn('treasury-live-dot', statusStyle.dot)} aria-hidden="true" />
+                <span dir="ltr" title={effectiveData.username}>{effectiveData.username}</span>
+                <OnlineBadge lastOnline={effectiveData.online_at} />
+              </div>
             </div>
             <button
               type="button"
               onClick={() => !isValidating && normalizedStatus !== 'disabled' && refresh()}
               disabled={isValidating || normalizedStatus === 'disabled'}
-              className="ios-icon-button"
-              aria-label={normalizedStatus === 'disabled' ? 'Account disabled' : 'Refresh data'}
-              title={normalizedStatus === 'disabled' ? 'Account disabled' : 'Refresh data'}
+              className="treasury-refresh"
+              aria-label={isFa ? 'به‌روزرسانی اطلاعات' : 'Refresh data'}
             >
               <RefreshCcw className={cn('size-[18px]', isValidating && 'animate-spin')} />
             </button>
           </section>
 
-          {hasAnnouncement && (
-            <section className="ios-notice animate-fadeIn" aria-labelledby="announcement-title">
-              <div className="ios-notice-icon"><Bell className="size-[18px]" /></div>
-              <div className="min-w-0 flex-1">
-                <h2 id="announcement-title" className="text-[15px] font-semibold text-foreground">
-                  {t('userInfo.announcement')}
-                </h2>
-                {announcementMessage && <p className="page-meta mt-1 whitespace-pre-wrap break-words">{announcementMessage}</p>}
-                {announceUrl && (
-                  <a href={announceUrl} target="_blank" rel="noopener noreferrer" className="ios-link mt-2">
-                    {t('userInfo.viewAnnouncement')}
-                  </a>
-                )}
+          <section className={cn('treasury-hero animate-fadeIn', statusStyle.tone)} aria-labelledby="account-status">
+            <div className="treasury-hero-glow" aria-hidden="true" />
+            <div className="treasury-hero-copy">
+              <span className="treasury-shield"><ShieldCheck className="size-7" /></span>
+              <div id="account-status" className="treasury-status">
+                <span className={cn('size-2 rounded-full', statusStyle.dot)} aria-hidden="true" />
+                {normalizedStatus === 'active' && isFa ? 'متصل و فعال' : t(`status.${normalizedStatus}`)}
               </div>
-            </section>
-          )}
-
-          <section className={cn('ios-hero-card animate-fadeIn', statusStyle.tone)} aria-labelledby="account-status">
-            <div className="ios-hero-header">
-              <div>
-                <p className="page-label">{t('userInfo.status')}</p>
-                <div id="account-status" className={cn('ios-status-pill', statusStyle.color)}>
-                  <span className={cn('size-2 rounded-full', statusStyle.dot)} aria-hidden="true" />
-                  {t(`status.${normalizedStatus}`)}
-                </div>
-              </div>
-              <div className="text-end">
-                <p className={cn('page-label', expiryInfo.isExpired && 'text-destructive')}>{expiryInfo.status}</p>
-                <p className="mt-0.5 text-lg font-semibold tracking-tight text-foreground">{expiryInfo.time}</p>
-              </div>
+              <p>{isFa ? 'اتصال امن شما آماده استفاده است' : 'Your secure connection is ready'}</p>
+              <button type="button" className="treasury-quick-action" onClick={scrollToConnections}>
+                <Zap className="size-[18px] fill-current" />
+                {isFa ? 'اتصال سریع' : 'Quick connect'}
+              </button>
             </div>
 
-            <div className="ios-usage-layout">
+            <div className="treasury-orbit-wrap">
               <div
-                className="ios-progress-ring"
+                className="treasury-orbit"
                 style={{ '--progress': `${Math.min(usagePercentage, 100) * 3.6}deg` } as CSSProperties}
                 role="img"
                 aria-label={`${Math.min(usagePercentage, 100).toFixed(0)}% ${t('userInfo.used')}`}
               >
-                <div className="ios-progress-center">
-                  <strong>{Math.min(usagePercentage, 100).toFixed(0)}%</strong>
+                <span className="treasury-orbit-spark" aria-hidden="true" />
+                <div className="treasury-orbit-center">
+                  <strong>{Math.min(usagePercentage, 100).toFixed(0)}<small>%</small></strong>
                   <span>{t('userInfo.used')}</span>
                 </div>
               </div>
-              <div className="ios-metrics-list">
-                <div className="ios-metric-row">
-                  <span>{t('userInfo.totalLimit')}</span>
-                  <strong dir="ltr">{effectiveData.data_limit ? formatBytes(effectiveData.data_limit) : t('userInfo.unlimited')}</strong>
-                </div>
-                <div className="ios-metric-row">
-                  <span>{t('userInfo.usedTraffic')}</span>
-                  <strong dir="ltr">{formatBytes(effectiveData.used_traffic || 0)}</strong>
-                </div>
-                <div className="ios-metric-row">
-                  <span>{t('remaining')}</span>
-                  <strong dir="ltr" className="text-[var(--success)]">{remainingTraffic}</strong>
-                </div>
+              <div className={cn('treasury-expiry', expiryInfo.isExpired && 'is-danger')}>
+                <CalendarDays className="size-4" />
+                <span>{expiryInfo.time}</span>
               </div>
             </div>
+
+            <svg className="treasury-wave" viewBox="0 0 720 150" preserveAspectRatio="none" aria-hidden="true">
+              <path className="treasury-wave-soft" d="M0 95 C70 20 115 130 190 68 C255 12 302 126 375 72 C455 15 510 126 575 70 C636 18 675 96 720 48" />
+              <path className="treasury-wave-line" d="M0 108 C76 36 122 136 194 82 C262 26 306 132 382 80 C452 31 512 132 580 79 C638 34 681 104 720 65" />
+            </svg>
           </section>
 
-          <section className="ios-stat-grid animate-fadeIn" aria-label={t('userInfo.usageDetails', 'Usage details')}>
-            <div className="ios-stat-card">
-              <span className="ios-stat-icon"><Database className="size-[18px]" /></span>
-              <p className="page-label">{t('userInfo.lifetimeTraffic')}</p>
-              <strong dir="ltr" className="ios-stat-value">{formatBytes(effectiveData.lifetime_used_traffic || 0)}</strong>
+          <section className="treasury-metrics animate-fadeIn" aria-label={t('userInfo.usageDetails', 'Usage details')}>
+            <div className="treasury-metric">
+              <span>{t('userInfo.totalLimit')}</span>
+              <strong dir="ltr">{effectiveData.data_limit ? formatBytes(effectiveData.data_limit) : t('userInfo.unlimited')}</strong>
             </div>
-            <div className="ios-stat-card">
-              <span className="ios-stat-icon"><CalendarDays className="size-[18px]" /></span>
-              <p className="page-label">{effectiveData.status === 'on_hold' ? t('userInfo.duration') : t('userInfo.expiryDate')}</p>
-              <strong dir={dir === 'rtl' && effectiveData.status === 'on_hold' ? 'rtl' : 'ltr'} className="ios-stat-value">
-                {effectiveData.status === 'on_hold' ? durationText : expiryDate}
-              </strong>
+            <div className="treasury-filament" aria-hidden="true"><i /></div>
+            <div className="treasury-metric">
+              <span>{t('userInfo.usedTraffic')}</span>
+              <strong dir="ltr">{formatBytes(effectiveData.used_traffic || 0)}</strong>
             </div>
-            <div className="ios-stat-card">
-              <span className="ios-stat-icon"><Activity className="size-[18px]" /></span>
-              <p className="page-label">{t('userInfo.lastOnline')}</p>
-              <strong dir="ltr" className="ios-stat-value text-sm">
-                {effectiveData.online_at ? formatDate(effectiveData.online_at, locale) : t('notConnectedYet')}
-              </strong>
+            <div className="treasury-filament" aria-hidden="true"><i /></div>
+            <div className="treasury-metric is-success">
+              <span>{t('remaining')}</span>
+              <strong dir="ltr">{remainingTraffic}</strong>
             </div>
           </section>
 
-          <div className="ios-content-stack">
+          <section className="treasury-notice animate-fadeIn" aria-labelledby="announcement-title">
+            <div className="treasury-notice-icon"><Bell className="size-[18px]" /></div>
+            <div className="min-w-0 flex-1">
+              <h2 id="announcement-title">{t('userInfo.announcement')}</h2>
+              <p className="whitespace-pre-wrap break-words">
+                {announcementMessage || (isFa ? 'سرویس شما آماده استفاده است' : 'Your service is ready to use')}
+              </p>
+              {announceUrl && (
+                <a href={announceUrl} target="_blank" rel="noopener noreferrer" className="ios-link">
+                  {t('userInfo.viewAnnouncement')}
+                </a>
+              )}
+            </div>
+            <ChevronDown className="size-4 -rotate-90 text-muted-foreground rtl:rotate-90" aria-hidden="true" />
+          </section>
+
+          <section className="treasury-detail-strip animate-fadeIn">
+            <div><Database className="size-4" /><span>{t('userInfo.lifetimeTraffic')}</span><strong dir="ltr">{formatBytes(effectiveData.lifetime_used_traffic || 0)}</strong></div>
+            <div><CalendarDays className="size-4" /><span>{effectiveData.status === 'on_hold' ? t('userInfo.duration') : t('userInfo.expiryDate')}</span><strong dir={dir === 'rtl' && effectiveData.status === 'on_hold' ? 'rtl' : 'ltr'}>{effectiveData.status === 'on_hold' ? durationText : expiryDate}</strong></div>
+            <div><Activity className="size-4" /><span>{t('userInfo.lastOnline')}</span><strong dir="ltr">{effectiveData.online_at ? formatDate(effectiveData.online_at, locale) : t('notConnectedYet')}</strong></div>
+          </section>
+
+          <div className="treasury-content-stack">
             {(hasLinks || hasChart) && (
-              <div className={cn('grid w-full grid-cols-1 gap-5', hasLinks && hasChart && 'lg:grid-cols-2')}>
+              <div className={cn('treasury-content-grid', hasLinks && hasChart && 'has-two-columns')}>
+                {hasChart && (
+                  <div className="min-w-0 w-full animate-fadeIn">
+                    <TrafficChart data={chartUsage} isLoading={!chartData} error={chartError} timeRange={timeRange} onTimeRangeChange={setTimeRange} />
+                  </div>
+                )}
                 {hasLinks ? (
-                  <div className={hasChart ? 'order-2 lg:order-1' : ''}>
+                  <div id="connection-links" className="scroll-mt-24">
                     <ConnectionLinks links={configData!.links} />
                   </div>
                 ) : (
                   <ProminentSubscriptionLink hasChart={hasChart} />
                 )}
-                {hasChart && (
-                  <div className={cn('min-w-0 w-full animate-fadeIn', hasLinks && 'order-1 lg:order-2')}>
-                    <TrafficChart
-                      data={chartUsage}
-                      isLoading={!chartData}
-                      error={chartError}
-                      timeRange={timeRange}
-                      onTimeRangeChange={setTimeRange}
-                    />
-                  </div>
-                )}
               </div>
             )}
 
-            <div className="ios-section-heading animate-fadeIn">
-              <h2>{t('apps.title')}</h2>
+            <div className="treasury-section-title animate-fadeIn">
+              <div><span><Sparkles className="size-4" /></span><h2>{isFa ? 'اپلیکیشن پیشنهادی' : t('apps.title')}</h2></div>
+              <p>{isFa ? 'بهترین ابزار برای دستگاه شما' : 'The best tools for your device'}</p>
             </div>
             <AppsList />
           </div>

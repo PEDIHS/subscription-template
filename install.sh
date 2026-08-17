@@ -113,16 +113,31 @@ download_file() {
 
 download_prebuilt_fallback() {
   local archive="${TEMP_DIR}/index.html.gz"
+  local manifest="${TEMP_DIR}/index.parts"
   local part_file=""
   local part=""
+  local part_count=""
+  local part_index=0
 
   if ! command -v gzip >/dev/null 2>&1; then
     echo "Error: gzip is required for the prebuilt fallback." >&2
     return 1
   fi
 
+  if ! download_file "${RAW_PREBUILT_BASE}/index.parts" "${manifest}"; then
+    echo "Error: failed to download the prebuilt manifest." >&2
+    return 1
+  fi
+
+  read -r part_count < "${manifest}"
+  if [[ ! "${part_count}" =~ ^[1-9][0-9]?$ ]]; then
+    echo "Error: invalid prebuilt manifest." >&2
+    return 1
+  fi
+
   : > "${archive}"
-  for part in 00 01 02 03 04 05 06 07; do
+  for ((part_index = 0; part_index < part_count; part_index++)); do
+    printf -v part '%02d' "${part_index}"
     part_file="${TEMP_DIR}/index.html.gz.part-${part}"
     if ! download_file "${RAW_PREBUILT_BASE}/index.html.gz.part-${part}" "${part_file}"; then
       echo "Error: failed to download prebuilt part ${part}." >&2
