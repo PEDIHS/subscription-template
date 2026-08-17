@@ -23,7 +23,7 @@ export function getProtocol(link: string): ParsedLink['protocol'] {
 /**
  * Decodes vmess base64 configuration
  */
-function decodeVmessConfig(base64Data: string): any {
+function decodeVmessConfig(base64Data: string): { ps?: string; add?: string; port?: string | number } | null {
   try {
     const decoded = atob(base64Data);
     return JSON.parse(decoded);
@@ -187,4 +187,3 @@ export function parseLink(link: string, index: number): ParsedLink {
 export function parseLinks(links: string[]): ParsedLink[] {
   return links.map((link, index) => parseLink(link, index));
 }
-

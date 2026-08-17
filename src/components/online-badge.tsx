@@ -15,29 +15,26 @@ export const OnlineBadge: FC<OnlineBadgeProps> = ({ lastOnline, showText = false
   const renderBadge = () => {
     if (!lastOnline) {
       return (
-        <div className="flex items-center gap-2">
-          <div className="w-2.5 h-2.5 rounded-full border-2 border-muted-foreground/50" />
-          {showText && <span className="text-sm text-muted-foreground">{text}</span>}
+        <div className="flex items-center gap-1.5">
+          <div className="size-2 rounded-full border border-muted-foreground/60" />
+          {showText && <span className="text-xs text-muted-foreground">{text}</span>}
         </div>
       );
     }
 
     if (isOnline) {
       return (
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
-            <div className="absolute inset-0 w-2.5 h-2.5 rounded-full bg-green-500 animate-ping opacity-75" />
-          </div>
-          {showText && <span className="text-sm text-green-600 dark:text-green-400 font-medium">{text}</span>}
+        <div className="flex items-center gap-1.5">
+          <div className="size-2 rounded-full bg-[var(--success)] shadow-[0_0_0_3px_color-mix(in_srgb,var(--success)_14%,transparent)]" />
+          {showText && <span className="text-xs font-medium text-[var(--success)]">{text}</span>}
         </div>
       );
     }
 
     return (
-      <div className="flex items-center gap-2">
-        <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/60" />
-        {showText && <span className="text-sm text-muted-foreground">{text}</span>}
+      <div className="flex items-center gap-1.5">
+        <div className="size-2 rounded-full bg-muted-foreground/60" />
+        {showText && <span className="text-xs text-muted-foreground">{text}</span>}
       </div>
     );
   };
@@ -48,4 +45,3 @@ export const OnlineBadge: FC<OnlineBadgeProps> = ({ lastOnline, showText = false
     </div>
   );
 };
-

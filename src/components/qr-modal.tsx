@@ -109,14 +109,14 @@ export const QRModal = memo(({ link, open, onOpenChange }: QRModalProps) => {
         <div className="flex flex-col items-center gap-3 sm:gap-4 py-1 sm:py-2 overflow-hidden">
           {wireGuardDownload && (
             <div
-              className="inline-flex rounded-md border border-border bg-muted/30 p-1"
+              className="ios-segmented-control"
               aria-label={t('qr.format')}
             >
               <Button
                 type="button"
                 size="sm"
-                variant={wireGuardQrMode === 'config' ? 'default' : 'ghost'}
-                className="h-7 px-2.5 text-xs"
+                variant="ghost"
+                className={`ios-segmented-item ${wireGuardQrMode === 'config' ? 'is-selected' : ''}`}
                 onClick={() => setWireGuardQrMode('config')}
               >
                 {t('qr.config')}
@@ -124,8 +124,8 @@ export const QRModal = memo(({ link, open, onOpenChange }: QRModalProps) => {
               <Button
                 type="button"
                 size="sm"
-                variant={wireGuardQrMode === 'uri' ? 'default' : 'ghost'}
-                className="h-7 px-2.5 text-xs"
+                variant="ghost"
+                className={`ios-segmented-item ${wireGuardQrMode === 'uri' ? 'is-selected' : ''}`}
                 onClick={() => setWireGuardQrMode('uri')}
               >
                 URI
@@ -135,7 +135,7 @@ export const QRModal = memo(({ link, open, onOpenChange }: QRModalProps) => {
 
           {/* QR Code Display */}
           {canGenerateQR ? (
-            <div className="flex justify-center items-center p-2 sm:p-3 bg-white rounded-lg sm:rounded-xl shadow-sm w-full max-w-full">
+            <div className="flex justify-center items-center p-3 bg-white rounded-2xl shadow-sm w-full max-w-full">
               <QRCodeCanvas 
                 value={qrValue}
                 size={qrSize}
@@ -157,8 +157,8 @@ export const QRModal = memo(({ link, open, onOpenChange }: QRModalProps) => {
           )}
 
           {/* Link Info */}
-          <div className="w-full p-2.5 sm:p-3 rounded-lg bg-muted/30 flex items-center gap-2 text-sm">
-            <div className="page-badge px-1.5 sm:px-2 py-0.5 sm:py-1 rounded bg-primary text-primary-foreground">
+          <div className="w-full min-h-12 px-3 rounded-xl bg-muted/60 flex items-center gap-2 text-sm">
+            <div className="ios-protocol-badge">
               {protocolBadge}
             </div>
             {link.emoji && (
@@ -226,4 +226,3 @@ export const QRModal = memo(({ link, open, onOpenChange }: QRModalProps) => {
     </Dialog>
   );
 });
-

@@ -19,7 +19,7 @@ export function ThemeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon" className="transition-colors duration-200">
+        <Button variant="outline" size="icon" className="ios-toolbar-button">
           <Sun className="transition-all duration-300 ease-in-out dark:hidden" />
           <Moon className="hidden transition-all duration-300 ease-in-out dark:block" />
           <span className="sr-only">{t('theme.toggle', 'Toggle theme')}</span>

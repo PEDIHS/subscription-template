@@ -3,16 +3,18 @@
 قالب صفحه اشتراک واکنش‌گرا برای PasarGuard.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/PasarGuard/subscription-template/refs/heads/main/screenshots/en.png" alt="English UI" width="40%">
-  <img src="https://raw.githubusercontent.com/PasarGuard/subscription-template/refs/heads/main/screenshots/fa.png" alt="Persian UI" width="30%">
+  <img src="https://raw.githubusercontent.com/PEDIHS/subscription-template/refs/heads/main/screenshots/en.png" alt="English UI" width="55%">
+  <img src="https://raw.githubusercontent.com/PEDIHS/subscription-template/refs/heads/main/screenshots/fa.png" alt="Persian UI" width="22%">
 </p>
 
 ## امکانات
 
 - زبان‌ها: `en`، `fa`، `zh`، `ru`
 - امکان تغییر زبان توسط کاربر
-- طراحی واکنش‌گرا
-- حالت تاریک
+- طراحی واکنش‌گرا بر پایه الگوهای مدرن Apple HIG
+- حالت روشن، تاریک و هماهنگ با تنظیمات سیستم
+- رابط اختصاصی سبز زمردی و طلایی با متریال و محوشدگی کنترل‌شده
+- رعایت Safe Area، کنتراست، Reduced Motion و اهداف لمسی موبایل
 - QR برای لینک‌های اتصال
 - کپی لینک و کانفیگ با یک کلیک، با امکان کپی Base64 فقط در مودال QR
 - لینک‌های WireGuard به صورت کانفیگ اصلی هم قابل کپی و دانلود با فرمت `.conf` هستند
@@ -30,7 +32,7 @@
 اجرای اسکریپت نصب (با انتخاب زبان پیش‌فرض):
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/PasarGuard/subscription-template/main/install.sh | sudo bash -s -- --lang fa
+curl -fsSL https://raw.githubusercontent.com/PEDIHS/subscription-template/main/install.sh | sudo bash -s -- --lang fa
 ```
 
 مقادیر معتبر `--lang`: `en`، `fa`، `zh`، `ru`
@@ -44,7 +46,7 @@ curl -fsSL https://raw.githubusercontent.com/PasarGuard/subscription-template/ma
 ```sh
 sudo mkdir -p /var/lib/pasarguard/templates/subscription
 sudo wget -O /var/lib/pasarguard/templates/subscription/index.html \
-https://github.com/PasarGuard/subscription-template/releases/latest/download/index.html
+https://github.com/PEDIHS/subscription-template/releases/latest/download/index.html
 ```
 
 2. تنظیم PasarGuard در فایل `/opt/pasarguard/.env`:
@@ -63,7 +65,7 @@ pasarguard restart
 ## ساخت از سورس
 
 ```sh
-git clone https://github.com/PasarGuard/subscription-template.git
+git clone https://github.com/PEDIHS/subscription-template.git
 cd subscription-template
 bun install
 bun run build

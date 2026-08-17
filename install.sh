@@ -6,10 +6,21 @@ VERSION="latest"
 DEST_DIR="/var/lib/pasarguard/templates/subscription"
 DEST_FILE="${DEST_DIR}/index.html"
 ENV_FILE="/opt/pasarguard/.env"
+TEMP_DIR=""
+STAGED_FILE=""
+ROLLBACK_FILE=""
 
 # تنظیمات ریپازیتوری شخصی شما
 REPO_OWNER="PEDIHS"
 REPO_NAME="subscription-template"
+
+cleanup() {
+  [[ -n "${STAGED_FILE}" && -f "${STAGED_FILE}" ]] && rm -f "${STAGED_FILE}"
+  [[ -n "${ROLLBACK_FILE}" && -f "${ROLLBACK_FILE}" ]] && rm -f "${ROLLBACK_FILE}"
+  [[ -n "${TEMP_DIR}" && -d "${TEMP_DIR}" ]] && rm -rf "${TEMP_DIR}"
+}
+
+trap cleanup EXIT
 
 usage() {
   cat <<'EOF'
@@ -60,6 +71,11 @@ case "${LANG_CODE}" in
     ;;
 esac
 
+if [[ "${EUID}" -ne 0 ]]; then
+  echo "Error: run this installer with sudo." >&2
+  exit 1
+fi
+
 if [[ -z "${VERSION}" ]]; then
   echo "Error: version cannot be empty. Use 'latest' or a release tag like 'v2.0.0'." >&2
   exit 1
@@ -77,15 +93,41 @@ if [[ "${LANG_CODE}" == "fa" ]]; then
 fi
 
 mkdir -p "${DEST_DIR}"
+TEMP_DIR="$(mktemp -d)"
+STAGED_FILE="$(mktemp "${DEST_DIR}/.subscription-template.XXXXXX")"
 
 if command -v wget >/dev/null 2>&1; then
-  wget -q -O "${DEST_FILE}" "${URL}"
+  wget -q --timeout=25 --tries=3 -O "${STAGED_FILE}" "${URL}"
 elif command -v curl >/dev/null 2>&1; then
-  curl -fsSL "${URL}" -o "${DEST_FILE}"
+  curl -fsSL --connect-timeout 25 --retry 3 --retry-delay 2 "${URL}" -o "${STAGED_FILE}"
 else
   echo "Error: neither wget nor curl is installed." >&2
   exit 1
 fi
+
+if [[ ! -s "${STAGED_FILE}" ]] || ! grep -qi '<!doctype html' "${STAGED_FILE}"; then
+  echo "Error: downloaded release asset is not a valid HTML template." >&2
+  exit 1
+fi
+
+if [[ "$(wc -c < "${STAGED_FILE}")" -lt 100000 ]]; then
+  echo "Error: downloaded template is unexpectedly small; installation stopped." >&2
+  exit 1
+fi
+
+chmod 0644 "${STAGED_FILE}"
+
+if [[ -f "${DEST_FILE}" ]]; then
+  ROLLBACK_FILE="$(mktemp "${DEST_DIR}/.index.rollback.XXXXXX")"
+  cp -p "${DEST_FILE}" "${ROLLBACK_FILE}"
+fi
+
+if [[ -f "${ENV_FILE}" ]]; then
+  cp -p "${ENV_FILE}" "${TEMP_DIR}/pasarguard.env"
+fi
+
+mv -f "${STAGED_FILE}" "${DEST_FILE}"
+STAGED_FILE=""
 
 mkdir -p "$(dirname "${ENV_FILE}")"
 touch "${ENV_FILE}"
@@ -103,7 +145,18 @@ else
 fi
 
 if command -v pasarguard >/dev/null 2>&1; then
-  pasarguard restart
+  if ! pasarguard restart; then
+    echo "Error: PasarGuard restart failed; restoring the previous configuration." >&2
+    if [[ -n "${ROLLBACK_FILE}" && -f "${ROLLBACK_FILE}" ]]; then
+      mv -f "${ROLLBACK_FILE}" "${DEST_FILE}"
+      ROLLBACK_FILE=""
+    fi
+    if [[ -f "${TEMP_DIR}/pasarguard.env" ]]; then
+      cp -p "${TEMP_DIR}/pasarguard.env" "${ENV_FILE}"
+    fi
+    pasarguard restart || true
+    exit 1
+  fi
   echo "✅ نصب قالب سفارشی (${LANG_CODE}, ${VERSION}) انجام شد و PasarGuard ری‌استارت گردید."
 else
   echo "✅ قالب سفارشی (${LANG_CODE}, ${VERSION}) در مسیر ${DEST_FILE} نصب شد."
