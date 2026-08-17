@@ -1078,6 +1078,158 @@
   .treasury-filament { position: relative; height: 2px; background: linear-gradient(90deg, transparent, rgba(203, 156, 45, 0.72), transparent); }
   .treasury-filament i { position: absolute; top: 50%; inset-inline-start: 50%; width: 7px; height: 7px; transform: translate(-50%, -50%); border: 2px solid #e1b547; border-radius: 50%; background: var(--card-solid); box-shadow: 0 0 10px rgba(208, 157, 34, 0.34); }
 
+  .treasury-reservoir {
+    --liquid-level: 100%;
+    --liquid-color: #14845e;
+    --liquid-color-bright: #4ed39f;
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(260px, 1.15fr);
+    gap: 1.15rem;
+    overflow: hidden;
+    border: 0.5px solid color-mix(in srgb, var(--liquid-color) 30%, var(--border));
+    border-radius: 1.55rem;
+    padding: 1rem;
+    background:
+      radial-gradient(circle at 82% 30%, color-mix(in srgb, var(--liquid-color) 9%, transparent), transparent 42%),
+      var(--card);
+    box-shadow: var(--shadow);
+  }
+
+  .treasury-reservoir-copy {
+    display: flex;
+    min-width: 0;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.2rem;
+  }
+
+  .treasury-reservoir-copy > div {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  .treasury-reservoir-icon {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    flex: none;
+    place-items: center;
+    border-radius: 14px;
+    color: var(--liquid-color);
+    background: color-mix(in srgb, var(--liquid-color) 12%, var(--card-solid));
+  }
+
+  .treasury-reservoir-copy h2 { color: var(--foreground); font-size: 1rem; font-weight: 740; }
+  .treasury-reservoir-copy p { margin-top: 0.2rem; color: var(--muted-foreground); font-size: 0.7rem; line-height: 1.55; }
+  .treasury-reservoir-copy > strong { color: var(--liquid-color); font-size: clamp(1.35rem, 4vw, 2rem); font-weight: 790; letter-spacing: -0.04em; }
+
+  .treasury-liquid-vessel {
+    position: relative;
+    isolation: isolate;
+    min-height: 126px;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--liquid-color) 38%, var(--border));
+    border-radius: 1.15rem 2rem 1.15rem 2rem / 1.5rem 1.15rem 2rem 1.15rem;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.08), transparent),
+      color-mix(in srgb, var(--muted) 52%, transparent);
+    box-shadow: inset 0 0 0 5px color-mix(in srgb, var(--card-solid) 34%, transparent), inset 0 10px 28px rgba(0,0,0,0.035);
+  }
+
+  .treasury-liquid-fill {
+    position: absolute;
+    z-index: -1;
+    inset-inline: 0;
+    bottom: 0;
+    height: var(--liquid-level);
+    min-height: 3px;
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--liquid-color-bright) 78%, white) 0%, var(--liquid-color) 42%, color-mix(in srgb, var(--liquid-color) 84%, black) 100%);
+    box-shadow: 0 -8px 24px color-mix(in srgb, var(--liquid-color-bright) 26%, transparent);
+    transition: height 1100ms cubic-bezier(0.22, 1, 0.36, 1), background 500ms ease;
+  }
+
+  .treasury-liquid-wave {
+    position: absolute;
+    top: -13px;
+    inset-inline-start: -10%;
+    width: 120%;
+    height: 27px;
+    border-radius: 45%;
+    background: color-mix(in srgb, var(--liquid-color-bright) 72%, white);
+    opacity: 0.68;
+    transform-origin: center;
+  }
+
+  .treasury-liquid-wave.is-front { animation: treasury-wave 5.5s ease-in-out infinite alternate; }
+  .treasury-liquid-wave.is-back { top: -9px; opacity: 0.34; animation: treasury-wave-back 7s ease-in-out infinite alternate-reverse; }
+
+  .treasury-liquid-bubble {
+    position: absolute;
+    bottom: -12px;
+    width: 7px;
+    height: 7px;
+    border: 1px solid rgba(255,255,255,0.72);
+    border-radius: 50%;
+    opacity: 0;
+    animation: treasury-bubble 4.8s ease-in infinite;
+  }
+
+  .treasury-liquid-bubble.is-one { inset-inline-start: 22%; animation-delay: 0.2s; }
+  .treasury-liquid-bubble.is-two { inset-inline-start: 57%; width: 10px; height: 10px; animation-delay: 1.7s; }
+  .treasury-liquid-bubble.is-three { inset-inline-start: 78%; width: 5px; height: 5px; animation-delay: 3.1s; }
+
+  .treasury-liquid-readout {
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    color: var(--foreground);
+    text-shadow: 0 1px 14px color-mix(in srgb, var(--card-solid) 80%, transparent);
+  }
+
+  .treasury-liquid-readout strong { font-size: clamp(1.75rem, 5vw, 2.5rem); font-weight: 800; line-height: 1; letter-spacing: -0.055em; }
+  .treasury-liquid-readout small { margin-inline-start: 0.12rem; font-size: 0.45em; }
+  .treasury-liquid-readout span { margin-top: 0.3rem; font-size: 0.67rem; font-weight: 650; }
+
+  .treasury-liquid-scale {
+    position: absolute;
+    z-index: 3;
+    inset-inline-end: 11px;
+    top: 15%;
+    bottom: 15%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .treasury-liquid-scale i { width: 12px; height: 1px; background: color-mix(in srgb, var(--foreground) 30%, transparent); }
+  .treasury-liquid-scale i:nth-child(3) { width: 18px; }
+
+  .treasury-reservoir-legend {
+    display: flex;
+    grid-column: 1 / -1;
+    align-items: center;
+    gap: 0.55rem;
+    color: var(--muted-foreground);
+    font-size: 0.62rem;
+  }
+
+  .treasury-reservoir-legend i {
+    height: 3px;
+    flex: 1;
+    border-radius: 99px;
+    background: linear-gradient(90deg, #d13d38, #d79c25 48%, #16825d);
+    opacity: 0.8;
+  }
+
   .treasury-notice {
     display: flex;
     min-height: 70px;
@@ -1160,6 +1312,171 @@
   .treasury-shell .ios-platform-icon { border-radius: 13px; }
   .treasury-shell .ios-accordion-item.is-current { border-color: color-mix(in srgb, var(--treasury-gold) 58%, var(--border)); box-shadow: 0 8px 30px rgba(174, 123, 19, 0.1); }
   .treasury-shell .ios-app-card.is-recommended { border-color: color-mix(in srgb, var(--treasury-gold) 64%, var(--border)); box-shadow: 0 8px 22px rgba(168, 119, 18, 0.08); }
+  .treasury-traffic-card {
+    background:
+      radial-gradient(circle at 88% 0%, rgba(215, 171, 55, 0.075), transparent 30%),
+      var(--card);
+  }
+
+  .treasury-chart-total {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .treasury-chart-total span {
+    color: var(--primary);
+    font-size: 0.85rem;
+    font-weight: 750;
+  }
+
+  .treasury-chart-total small {
+    display: inline-flex;
+    min-height: 22px;
+    align-items: center;
+    border-radius: 999px;
+    padding-inline: 0.45rem;
+    color: var(--muted-foreground);
+    background: var(--muted);
+    font-size: 0.58rem;
+    font-weight: 720;
+  }
+
+  .treasury-links-section { display: flex; min-width: 0; flex-direction: column; gap: 0.75rem; }
+
+  .treasury-links-header {
+    display: flex;
+    min-height: 52px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-inline: 0.2rem;
+  }
+
+  .treasury-links-heading { display: flex; min-width: 0; align-items: center; gap: 0.65rem; }
+  .treasury-links-heading > span { display: grid; width: 40px; height: 40px; flex: none; place-items: center; border-radius: 14px; color: var(--treasury-gold); background: var(--primary-soft); }
+  .treasury-links-heading h2 { color: var(--foreground); font-size: 1.15rem; font-weight: 760; letter-spacing: -0.025em; }
+  .treasury-links-heading p { margin-top: 0.08rem; color: var(--muted-foreground); font-size: 0.68rem; }
+
+  .treasury-copy-all {
+    display: inline-flex;
+    min-height: 42px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    gap: 0.42rem;
+    border: 0;
+    border-radius: 999px;
+    padding: 0.5rem 0.85rem;
+    color: #192116;
+    background: linear-gradient(135deg, #f0ce6e, #bf8b21);
+    box-shadow: 0 9px 22px rgba(181, 127, 18, 0.18), inset 0 1px 0 rgba(255,255,255,0.5);
+    font-size: 0.72rem;
+    font-weight: 740;
+    transition: transform 150ms ease, filter 150ms ease;
+  }
+
+  .treasury-copy-all.is-success { color: white; background: linear-gradient(135deg, #169269, #07523e); }
+
+  .treasury-subscription-card {
+    position: relative;
+    display: grid;
+    min-height: 104px;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.8rem;
+    overflow: hidden;
+    border: 1px solid rgba(226, 189, 86, 0.35);
+    border-radius: 1.45rem 2.4rem 1.45rem 2rem / 1.8rem 1.4rem 2.1rem 1.4rem;
+    padding: 0.85rem;
+    color: #eef9f4;
+    background:
+      radial-gradient(circle at 95% 0%, rgba(235, 195, 83, 0.2), transparent 34%),
+      linear-gradient(135deg, #086149, #034534 60%, #022f25);
+    box-shadow: 0 14px 38px rgba(3, 65, 48, 0.2), inset 0 1px 0 rgba(255,255,255,0.12);
+  }
+
+  .treasury-subscription-card::after {
+    position: absolute;
+    inset-inline-start: 16%;
+    bottom: -32px;
+    width: 160px;
+    height: 70px;
+    border: 1px solid rgba(88, 223, 168, 0.2);
+    border-radius: 50%;
+    content: "";
+  }
+
+  .treasury-subscription-orb {
+    display: grid;
+    width: 52px;
+    height: 58px;
+    place-items: center;
+    border: 1px solid rgba(240, 201, 98, 0.72);
+    border-radius: 48% 48% 58% 58% / 38% 38% 68% 68%;
+    color: #f0cc6a;
+    background: rgba(238, 201, 103, 0.09);
+    box-shadow: 0 0 24px rgba(229, 182, 58, 0.15);
+  }
+
+  .treasury-subscription-copy { min-width: 0; }
+  .treasury-subscription-copy > span { color: #e8c65f; font-size: 0.55rem; font-weight: 780; letter-spacing: 0.12em; }
+  .treasury-subscription-copy strong { display: block; overflow: hidden; margin-top: 0.18rem; color: white; font-size: 0.96rem; font-weight: 750; text-overflow: ellipsis; white-space: nowrap; }
+  .treasury-subscription-copy small { display: block; overflow: hidden; margin-top: 0.2rem; color: rgba(231, 244, 237, 0.62); font-size: 0.64rem; line-height: 1.5; text-overflow: ellipsis; white-space: nowrap; }
+
+  .treasury-link-actions { display: flex; flex: none; gap: 0.35rem; }
+  .treasury-link-action {
+    display: grid;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    place-items: center;
+    border: 0.5px solid var(--border);
+    border-radius: 13px;
+    color: var(--treasury-emerald);
+    background: var(--material-strong);
+    box-shadow: 0 5px 15px rgba(7, 52, 39, 0.06);
+    transition: transform 140ms ease, color 140ms ease, background 140ms ease, box-shadow 140ms ease;
+  }
+
+  .treasury-subscription-card .treasury-link-action { border-color: rgba(242, 211, 127, 0.26); color: #f0cf72; background: rgba(255,255,255,0.08); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  .treasury-link-action.is-selected { color: white; background: var(--success); box-shadow: 0 6px 18px color-mix(in srgb, var(--success) 26%, transparent); }
+
+  .treasury-config-grid {
+    display: grid;
+    max-height: 480px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+    overflow-y: auto;
+    padding: 0.1rem;
+    scrollbar-width: thin;
+  }
+
+  .treasury-config-card {
+    position: relative;
+    display: grid;
+    min-width: 0;
+    min-height: 104px;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.65rem;
+    overflow: hidden;
+    border: 0.5px solid var(--border);
+    border-radius: 1.2rem;
+    padding: 0.72rem;
+    background: color-mix(in srgb, var(--card) 94%, transparent);
+    box-shadow: var(--shadow);
+    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+  }
+
+  .treasury-config-rail { position: absolute; inset-inline-start: 0; top: 20%; bottom: 20%; width: 3px; border-radius: 999px; background: linear-gradient(180deg, var(--treasury-gold-bright), var(--treasury-emerald-bright)); }
+  .treasury-config-number { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 12px; color: var(--treasury-gold); background: var(--primary-soft); font-size: 0.66rem; font-weight: 780; font-variant-numeric: tabular-nums; }
+  .treasury-config-copy { min-width: 0; }
+  .treasury-config-copy > div { display: flex; align-items: center; gap: 0.35rem; }
+  .treasury-config-protocol { display: inline-flex; min-height: 20px; align-items: center; border-radius: 999px; padding-inline: 0.45rem; color: #effbf5; background: linear-gradient(135deg, var(--treasury-emerald-bright), var(--treasury-emerald)); font-size: 0.53rem; font-weight: 780; text-transform: uppercase; }
+  .treasury-config-emoji { font-size: 0.76rem; }
+  .treasury-config-copy strong { display: block; overflow: hidden; margin-top: 0.28rem; color: var(--foreground); font-size: 0.82rem; font-weight: 720; text-overflow: ellipsis; white-space: nowrap; }
+  .treasury-config-copy small { display: block; margin-top: 0.1rem; color: var(--muted-foreground); font-size: 0.6rem; }
   .treasury-support-button {
     min-width: 148px;
     border-radius: 999px;
@@ -1170,14 +1487,22 @@
 }
 
 @keyframes treasury-spin { to { transform: rotate(360deg); } }
+@keyframes treasury-wave { from { transform: translateX(-2.5%) rotate(-1deg) scaleY(0.82); } to { transform: translateX(2.5%) rotate(1deg) scaleY(1.08); } }
+@keyframes treasury-wave-back { from { transform: translateX(3%) rotate(1.5deg); } to { transform: translateX(-3%) rotate(-1.5deg); } }
+@keyframes treasury-bubble { 0% { transform: translateY(0) scale(0.7); opacity: 0; } 18% { opacity: 0.72; } 82% { opacity: 0.5; } 100% { transform: translateY(-105px) scale(1.16); opacity: 0; } }
 
 @media (hover: hover) {
   .treasury-refresh:hover { transform: translateY(-1px); box-shadow: var(--shadow-raised); }
   .treasury-quick-action:hover { filter: brightness(1.06); transform: translateY(-1px); }
+  .treasury-copy-all:hover { filter: brightness(1.05); transform: translateY(-1px); }
+  .treasury-link-action:hover { color: var(--treasury-gold); border-color: color-mix(in srgb, var(--treasury-gold) 38%, var(--border)); box-shadow: 0 8px 20px rgba(8, 62, 46, 0.1); }
+  .treasury-config-card:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--treasury-gold) 34%, var(--border)); box-shadow: var(--shadow-raised); }
 }
 
 .treasury-refresh:active,
-.treasury-quick-action:active { transform: scale(0.96); }
+.treasury-quick-action:active,
+.treasury-copy-all:active,
+.treasury-link-action:active { transform: scale(0.96); }
 
 @media (max-width: 780px) {
   .treasury-page { gap: 0.8rem; padding-top: 0.9rem; }
@@ -1188,8 +1513,12 @@
   .treasury-orbit { width: min(38vw, 170px); }
   .treasury-metrics { min-height: 96px; padding-inline: 0.5rem; }
   .treasury-detail-strip { grid-template-columns: 1fr; }
+  .treasury-reservoir { grid-template-columns: 1fr; }
+  .treasury-reservoir-copy { align-items: center; flex-direction: row; }
+  .treasury-reservoir-copy > strong { flex: none; }
   .treasury-detail-strip > div + div { border-inline-start: 0; border-top: 0.5px solid var(--separator); }
   .treasury-detail-strip > div { grid-template-columns: 24px minmax(0, 1fr) auto; min-height: 56px; }
+  .treasury-config-grid { grid-template-columns: 1fr; }
   .treasury-detail-strip svg { grid-row: auto; }
   .treasury-detail-strip span { font-size: 0.72rem; }
   .treasury-detail-strip strong { font-size: 0.78rem; text-align: end; }
@@ -1215,10 +1544,21 @@
   .treasury-metric span { font-size: 0.66rem; }
   .treasury-metric strong { font-size: 0.82rem; }
   .treasury-notice { min-height: 68px; }
+  .treasury-reservoir { padding: 0.8rem; }
+  .treasury-reservoir-copy { align-items: flex-start; flex-direction: column; gap: 0.7rem; }
+  .treasury-liquid-vessel { min-height: 132px; }
   .treasury-section-title { align-items: flex-start; flex-direction: column; gap: 0.25rem; }
   .treasury-section-title p { padding-inline-start: 2.85rem; }
+  .treasury-links-header { align-items: flex-start; }
+  .treasury-copy-all span { display: none; }
+  .treasury-copy-all { width: 42px; padding: 0; }
+  .treasury-subscription-card { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .treasury-subscription-copy small { white-space: normal; }
+  .treasury-config-card { min-height: 98px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .treasury-orbit::after { animation: none; }
+  .treasury-liquid-wave,
+  .treasury-liquid-bubble { animation: none; }
 }

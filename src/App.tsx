@@ -195,6 +195,15 @@ function App() {
   const hasLinks = Boolean(configData?.links?.length);
   const hasChart = !chartError;
   const chartUsage = getChartUsageData(chartData?.stats);
+  const remainingPercentage = !effectiveData.data_limit
+    ? 100
+    : Math.max(0, Math.min(100, 100 - usagePercentage));
+  const liquidHue = Math.round(remainingPercentage * 1.35);
+  const liquidStyle = {
+    '--liquid-level': `${remainingPercentage}%`,
+    '--liquid-color': `hsl(${liquidHue} 72% 38%)`,
+    '--liquid-color-bright': `hsl(${liquidHue} 78% 55%)`,
+  } as CSSProperties;
 
   const scrollToConnections = () => {
     document.getElementById('connection-links')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -294,6 +303,45 @@ function App() {
             <div className="treasury-metric is-success">
               <span>{t('remaining')}</span>
               <strong dir="ltr">{remainingTraffic}</strong>
+            </div>
+          </section>
+
+          <section className="treasury-reservoir animate-fadeIn" style={liquidStyle} aria-labelledby="reservoir-title">
+            <div className="treasury-reservoir-copy">
+              <div>
+                <span className="treasury-reservoir-icon" aria-hidden="true"><Database className="size-[18px]" /></span>
+                <div>
+                  <h2 id="reservoir-title">{isFa ? 'ذخیره باقی‌مانده' : 'Remaining reserve'}</h2>
+                  <p>{isFa ? 'سطح مخزن با مصرف شما کاهش پیدا می‌کند' : 'The reservoir falls as your usage grows'}</p>
+                </div>
+              </div>
+              <strong dir="ltr">{remainingTraffic}</strong>
+            </div>
+            <div
+              className="treasury-liquid-vessel"
+              role="progressbar"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={Math.round(remainingPercentage)}
+              aria-label={`${Math.round(remainingPercentage)}% ${t('remaining')}`}
+            >
+              <div className="treasury-liquid-fill">
+                <span className="treasury-liquid-wave is-front" />
+                <span className="treasury-liquid-wave is-back" />
+                <i className="treasury-liquid-bubble is-one" />
+                <i className="treasury-liquid-bubble is-two" />
+                <i className="treasury-liquid-bubble is-three" />
+              </div>
+              <div className="treasury-liquid-readout">
+                <strong>{Math.round(remainingPercentage)}<small>%</small></strong>
+                <span>{isFa ? 'باقی مانده' : 'remaining'}</span>
+              </div>
+              <div className="treasury-liquid-scale" aria-hidden="true"><i /><i /><i /><i /><i /></div>
+            </div>
+            <div className="treasury-reservoir-legend" aria-hidden="true">
+              <span>{isFa ? 'بحرانی' : 'Critical'}</span>
+              <i />
+              <span>{isFa ? 'مطمئن' : 'Healthy'}</span>
             </div>
           </section>
 

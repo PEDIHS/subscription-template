@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { useTranslation } from "react-i18next"
 import type { TooltipProps } from "recharts"
 import { dateUtils } from "@/lib/dateFormatter"
@@ -25,8 +25,6 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-const TRAFFIC_SERIES_COLOR = chartConfig.traffic.color ?? "var(--primary)"
-
 const formatBytes = (bytes: number) => {
   if (bytes === 0) return "0 B"
 
@@ -35,6 +33,17 @@ const formatBytes = (bytes: number) => {
   const i = Math.floor(Math.log(bytes) / Math.log(k))
 
   return `${(bytes / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`
+}
+
+const getDisplayUnit = (maxBytes: number) => {
+  const units = [
+    { label: "TB", divisor: 1024 ** 4 },
+    { label: "GB", divisor: 1024 ** 3 },
+    { label: "MB", divisor: 1024 ** 2 },
+    { label: "KB", divisor: 1024 },
+  ]
+
+  return units.find((unit) => maxBytes >= unit.divisor) ?? { label: "B", divisor: 1 }
 }
 
 interface TrafficDataPoint {
@@ -136,19 +145,22 @@ export const TrafficChart = React.memo(function TrafficChart({
 }: TrafficChartProps) {
   const { t, i18n } = useTranslation()
 
+  const displayUnit = React.useMemo(() => {
+    const maxBytes = Math.max(...(data ?? []).map((point) => point.total_traffic), 0)
+    return getDisplayUnit(maxBytes)
+  }, [data])
+
   const filteredData = React.useMemo(() => {
     if (!data || data.length === 0) return []
 
-    // Data is already filtered by the API based on timeRange
-    // Just format it for the chart
     return data.map((point) => ({
       date: point.period_start,
-      traffic: point.total_traffic / (1024 * 1024 * 1024), // Convert to GB
-      displayTraffic: parseFloat((point.total_traffic / (1024 * 1024 * 1024)).toFixed(2)),
+      traffic: point.total_traffic / displayUnit.divisor,
+      displayTraffic: Number((point.total_traffic / displayUnit.divisor).toFixed(3)),
       _bytes: point.total_traffic,
       _period_start: point.period_start,
     }))
-  }, [data])
+  }, [data, displayUnit])
   const hasChartPoints = filteredData.length > 0
   const totalUsedBytes = React.useMemo(
     () => data?.reduce((sum, point) => sum + point.total_traffic, 0) ?? 0,
@@ -162,16 +174,17 @@ export const TrafficChart = React.memo(function TrafficChart({
   ]), [t])
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="treasury-traffic-card overflow-hidden">
       <CardHeader className="flex flex-col gap-3 space-y-0 border-b pb-4">
         <div className="flex flex-wrap items-center justify-between w-full">
           <CardTitle className="page-section-title">{t('usage.title')}</CardTitle>
-          <div className="flex items-center gap-2 text-sm font-semibold text-primary">
+          <div className="treasury-chart-total">
             {totalUsedBytes > 0 && (
-              <span dir="ltr" className="font-semibold">
+              <span dir="ltr">
                 {formatBytes(totalUsedBytes)}
               </span>
             )}
+            <small>{displayUnit.label}</small>
           </div>
         </div>
         <div className="ios-segmented-control" role="group" aria-label={t('usage.title')}>
@@ -207,19 +220,29 @@ export const TrafficChart = React.memo(function TrafficChart({
                 >
                   <defs>
                     <linearGradient id="fillTraffic" x1="0" y1="0" x2="0" y2="1">
-                      <stop
-                        offset="5%"
-                        stopColor={TRAFFIC_SERIES_COLOR}
-                        stopOpacity={0.8}
-                      />
-                      <stop
-                        offset="95%"
-                        stopColor={TRAFFIC_SERIES_COLOR}
-                        stopOpacity={0.1}
-                      />
+                      <stop offset="0%" stopColor="var(--treasury-gold-bright)" stopOpacity={0.52} />
+                      <stop offset="34%" stopColor="var(--treasury-emerald-bright)" stopOpacity={0.34} />
+                      <stop offset="100%" stopColor="var(--treasury-emerald-bright)" stopOpacity={0.025} />
                     </linearGradient>
+                    <linearGradient id="strokeTraffic" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="var(--treasury-emerald-bright)" />
+                      <stop offset="78%" stopColor="var(--treasury-emerald-bright)" />
+                      <stop offset="100%" stopColor="var(--treasury-gold-bright)" />
+                    </linearGradient>
+                    <filter id="trafficGlow" x="-30%" y="-30%" width="160%" height="160%">
+                      <feGaussianBlur stdDeviation="2.5" result="blur" />
+                      <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                    </filter>
                   </defs>
                   <CartesianGrid vertical={false} stroke="var(--separator)" strokeDasharray="2 4" />
+                  <YAxis
+                    width={42}
+                    tickLine={false}
+                    axisLine={false}
+                    domain={[0, 'auto']}
+                    tick={{ fill: 'var(--muted-foreground)', fontSize: 10 }}
+                    tickFormatter={(value) => Number(value).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                  />
                   <XAxis
                     dataKey="date"
                     tickLine={false}
@@ -254,16 +277,22 @@ export const TrafficChart = React.memo(function TrafficChart({
                     }}
                   />
                   <ChartTooltip
-                    cursor={false}
+                    cursor={{ stroke: 'var(--treasury-gold)', strokeWidth: 1, strokeDasharray: '3 4' }}
                     content={<CustomTrafficTooltip timeRange={timeRange} />}
                   />
                   <Area
                     dataKey="displayTraffic"
                     type="monotone"
                     fill="url(#fillTraffic)"
-                    stroke={TRAFFIC_SERIES_COLOR}
-                    strokeWidth={2}
-                    animationDuration={800}
+                    stroke="url(#strokeTraffic)"
+                    strokeWidth={3}
+                    filter="url(#trafficGlow)"
+                    dot={filteredData.length <= 40 ? { r: 3.5, fill: 'var(--treasury-gold-bright)', stroke: 'var(--treasury-emerald)', strokeWidth: 2 } : false}
+                    activeDot={{ r: 6, fill: 'var(--treasury-gold-bright)', stroke: 'var(--card-solid)', strokeWidth: 3 }}
+                    connectNulls
+                    isAnimationActive
+                    animationBegin={120}
+                    animationDuration={1250}
                     animationEasing="ease-out"
                   />
                 </AreaChart>

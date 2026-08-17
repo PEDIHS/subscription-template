@@ -1,6 +1,6 @@
 import { useState, memo, useMemo, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Copy, Check, ScanQrCode, Files, Download, Link2 } from 'lucide-react';
+import { Copy, Check, ScanQrCode, Files, Download, Radio, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
 import { parseLinks, type ParsedLink } from '@/lib/linkParser';
@@ -95,133 +95,91 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
   }, []);
 
   return (
-    <section className="space-y-3 animate-fadeIn">
-      <div className="ios-panel-header">
-        <h2 className="page-section-title flex items-center gap-2">
-          <Link2 className="size-5 text-primary" aria-hidden="true" />
-          {t('config.title')}
-        </h2>
-        <button
-          onClick={handleCopyAll}
-          className="ios-compact-button"
-          title={copyAllSuccess ? t('apps.copyAllSuccess') : t('apps.copyAll')}
-        >
-          {copyAllSuccess ? (
-            <Check className="w-4 h-4 transition-transform duration-200 animate-pulse" />
-          ) : (
-            <Files className="w-4 h-4 transition-transform duration-200 group-hover:rotate-12" />
-          )}
-          <span className="transition-all duration-200 group-hover:translate-x-0.5">
-            {copyAllSuccess ? t('apps.copyAllSuccess') : t('apps.copyAll')}
-          </span>
-        </button>
-      </div>
-
-      <div className="ios-grouped-list max-h-[430px] overflow-y-auto">
-        {/* Subscription Link */}
-        <div className="ios-list-row ios-list-row-featured">
-          <div className="flex items-center gap-2">
-            {/* Subscription Badge */}
-            <div className="ios-protocol-badge">
-              SUB
-            </div>
-
-            {/* Name */}
-            <div className="page-item-title flex-1 min-w-0 truncate">
-              {t('config.subscriptionLink')}
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-1 shrink-0">
-              <button
-                onClick={handleCopySubscription}
-                className={`ios-row-action ${isCopied(subscriptionUrl) ? 'is-selected' : ''}`}
-                title={t('qr.copy')}
-              >
-                {isCopied(subscriptionUrl) ? (
-                  <Check className="w-3.5 h-3.5" />
-                ) : (
-                  <Copy className="w-3.5 h-3.5" />
-                )}
-              </button>
-
-              <button
-                onClick={() => handleShowQR({
-                  protocol: 'unknown',
-                  name: t('config.subscriptionLink'),
-                  emoji: '📱',
-                  raw: subscriptionUrl
-                })}
-                className="ios-row-action"
-                title={t('qr.show')}
-              >
-                <ScanQrCode className="w-3.5 h-3.5" />
-              </button>
-            </div>
+    <section className="treasury-links-section animate-fadeIn">
+      <header className="treasury-links-header">
+        <div className="treasury-links-heading">
+          <span><Radio className="size-5" aria-hidden="true" /></span>
+          <div>
+            <h2>{t('config.title')}</h2>
+            <p>{dir === 'rtl' ? `${parsedLinks.length.toLocaleString('fa-IR')} اتصال آماده` : `${parsedLinks.length} connections ready`}</p>
           </div>
         </div>
-        <div>
-          {parsedLinks.map((link, index) => {
-            const copied = isCopied(`${link.raw}:config`);
+        <button
+          type="button"
+          onClick={handleCopyAll}
+          className={cn('treasury-copy-all', copyAllSuccess && 'is-success')}
+          title={copyAllSuccess ? t('apps.copyAllSuccess') : t('apps.copyAll')}
+        >
+          {copyAllSuccess ? <Check className="size-4" /> : <Files className="size-4" />}
+          <span>{copyAllSuccess ? t('apps.copyAllSuccess') : t('apps.copyAll')}</span>
+        </button>
+      </header>
 
-            return (
-              <div
-                key={index}
-                className="ios-list-row"
-              >
-                <div className="flex items-center gap-2">
-                  {/* Protocol Badge */}
-                  <div className="ios-protocol-badge">
-                    {getProtocolBadge(link.protocol)}
-                  </div>
-
-                  {/* Emoji */}
-                  {link.emoji && (
-                    <span className="text-sm">{link.emoji}</span>
-                  )}
-
-                  {/* Name */}
-                  <div dir="ltr" className={cn("page-item-title flex-1 min-w-0 truncate", dir === 'rtl' ? 'text-right' : 'text-left')}>
-                    {link.name}
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex gap-1 shrink-0">
-                    {getWireGuardDownloadPayload(link.raw) && (
-                      <button
-                        onClick={() => handleDownloadWireGuard(link)}
-                        className="ios-row-action"
-                        title={t('configActions.downloadWireGuard')}
-                      >
-                        <Download className="w-3.5 h-3.5" />
-                      </button>
-                    )}
-                    <button
-                      onClick={() => handleCopy(link)}
-                      className={`ios-row-action ${copied ? 'is-selected' : ''}`}
-                      title={link.protocol === 'unknown' ? t('qr.copy') : t('configActions.copyConfig')}
-                    >
-                      {copied ? (
-                        <Check className="w-3.5 h-3.5" />
-                      ) : (
-                        <Copy className="w-3.5 h-3.5" />
-                      )}
-                    </button>
-
-                    <button
-                      onClick={() => handleShowQR(link)}
-                      className="ios-row-action"
-                      title={t('qr.show')}
-                    >
-                      <ScanQrCode className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+      <div className="treasury-subscription-card">
+        <span className="treasury-subscription-orb"><ShieldCheck className="size-5" /></span>
+        <div className="treasury-subscription-copy">
+          <span>SUBSCRIPTION</span>
+          <strong>{t('config.subscriptionLink')}</strong>
+          <small>{dir === 'rtl' ? 'بهترین گزینه برای افزودن خودکار همه سرورها' : 'Best for importing every server at once'}</small>
         </div>
+        <div className="treasury-link-actions">
+          <button
+            type="button"
+            onClick={handleCopySubscription}
+            className={cn('treasury-link-action', isCopied(subscriptionUrl) && 'is-selected')}
+            title={t('qr.copy')}
+          >
+            {isCopied(subscriptionUrl) ? <Check className="size-4" /> : <Copy className="size-4" />}
+          </button>
+          <button
+            type="button"
+            onClick={() => handleShowQR({ protocol: 'unknown', name: t('config.subscriptionLink'), emoji: '📱', raw: subscriptionUrl })}
+            className="treasury-link-action"
+            title={t('qr.show')}
+          >
+            <ScanQrCode className="size-4" />
+          </button>
+        </div>
+      </div>
 
+      <div className="treasury-config-grid">
+        {parsedLinks.map((link, index) => {
+          const copied = isCopied(`${link.raw}:config`);
+          const protocol = getProtocolBadge(link.protocol);
+
+          return (
+            <article key={`${link.raw}-${index}`} className="treasury-config-card">
+              <span className="treasury-config-rail" aria-hidden="true" />
+              <div className="treasury-config-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</div>
+              <div className="treasury-config-copy">
+                <div>
+                  <span className="treasury-config-protocol">{protocol}</span>
+                  {link.emoji && <span className="treasury-config-emoji">{link.emoji}</span>}
+                </div>
+                <strong dir="ltr" className={cn(dir === 'rtl' ? 'text-right' : 'text-left')}>{link.name}</strong>
+                <small>{dir === 'rtl' ? 'آماده اتصال امن' : 'Secure connection ready'}</small>
+              </div>
+              <div className="treasury-link-actions">
+                {getWireGuardDownloadPayload(link.raw) && (
+                  <button type="button" onClick={() => handleDownloadWireGuard(link)} className="treasury-link-action" title={t('configActions.downloadWireGuard')}>
+                    <Download className="size-4" />
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => handleCopy(link)}
+                  className={cn('treasury-link-action', copied && 'is-selected')}
+                  title={link.protocol === 'unknown' ? t('qr.copy') : t('configActions.copyConfig')}
+                >
+                  {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
+                </button>
+                <button type="button" onClick={() => handleShowQR(link)} className="treasury-link-action" title={t('qr.show')}>
+                  <ScanQrCode className="size-4" />
+                </button>
+              </div>
+            </article>
+          );
+        })}
       </div>
 
       {/* Keep the dialog mounted after close so Radix can play exit animations */}
