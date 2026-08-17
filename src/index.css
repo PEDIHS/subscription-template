@@ -1124,8 +1124,24 @@
   }
 
   .treasury-reservoir-copy h2 { color: var(--foreground); font-size: 1rem; font-weight: 740; }
-  .treasury-reservoir-copy p { margin-top: 0.2rem; color: var(--muted-foreground); font-size: 0.7rem; line-height: 1.55; }
   .treasury-reservoir-copy > strong { color: var(--liquid-color); font-size: clamp(1.35rem, 4vw, 2rem); font-weight: 790; letter-spacing: -0.04em; }
+
+  .treasury-reservoir.is-empty {
+    --liquid-color: #c9342f !important;
+    --liquid-color-bright: #ff7169 !important;
+    border-color: color-mix(in srgb, var(--destructive) 52%, var(--border));
+    background:
+      radial-gradient(circle at 78% 42%, color-mix(in srgb, var(--destructive) 13%, transparent), transparent 38%),
+      var(--card);
+    animation: treasury-empty-border 2.6s ease-in-out infinite;
+  }
+
+  .treasury-reservoir.is-empty .treasury-reservoir-icon {
+    color: var(--destructive);
+    background: color-mix(in srgb, var(--destructive) 12%, var(--card-solid));
+  }
+
+  .treasury-reservoir.is-empty .treasury-reservoir-copy > strong { color: var(--destructive); }
 
   .treasury-liquid-vessel {
     position: relative;
@@ -1198,6 +1214,33 @@
   .treasury-liquid-readout strong { font-size: clamp(1.75rem, 5vw, 2.5rem); font-weight: 800; line-height: 1; letter-spacing: -0.055em; }
   .treasury-liquid-readout small { margin-inline-start: 0.12rem; font-size: 0.45em; }
   .treasury-liquid-readout span { margin-top: 0.3rem; font-size: 0.67rem; font-weight: 650; }
+
+  .treasury-empty-state {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: var(--destructive);
+  }
+
+  .treasury-empty-state > span {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    border: 1px solid color-mix(in srgb, var(--destructive) 48%, transparent);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--destructive) 10%, var(--card-solid));
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--destructive) 30%, transparent);
+    animation: treasury-empty-pulse 1.9s ease-out infinite;
+  }
+
+  .treasury-empty-state > strong {
+    color: var(--destructive);
+    font-size: 1rem;
+    font-weight: 790;
+    letter-spacing: 0;
+  }
 
   .treasury-liquid-scale {
     position: absolute;
@@ -1370,9 +1413,9 @@
     padding: 0.5rem 0.85rem;
     color: #192116;
     background: linear-gradient(135deg, #f0ce6e, #bf8b21);
-    box-shadow: 0 9px 22px rgba(181, 127, 18, 0.18), inset 0 1px 0 rgba(255,255,255,0.5);
-    font-size: 0.72rem;
-    font-weight: 740;
+    box-shadow: 0 10px 26px rgba(181, 127, 18, 0.28), 0 0 0 4px rgba(210, 163, 48, 0.08), inset 0 1px 0 rgba(255,255,255,0.58);
+    font-size: 0.78rem;
+    font-weight: 790;
     transition: transform 150ms ease, filter 150ms ease;
   }
 
@@ -1445,7 +1488,7 @@
   .treasury-config-grid {
     display: grid;
     max-height: 480px;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: 0.65rem;
     overflow-y: auto;
     padding: 0.1rem;
@@ -1456,8 +1499,8 @@
     position: relative;
     display: grid;
     min-width: 0;
-    min-height: 104px;
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    min-height: 90px;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
     align-items: center;
     gap: 0.65rem;
     overflow: hidden;
@@ -1471,6 +1514,33 @@
 
   .treasury-config-rail { position: absolute; inset-inline-start: 0; top: 20%; bottom: 20%; width: 3px; border-radius: 999px; background: linear-gradient(180deg, var(--treasury-gold-bright), var(--treasury-emerald-bright)); }
   .treasury-config-number { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 12px; color: var(--treasury-gold); background: var(--primary-soft); font-size: 0.66rem; font-weight: 780; font-variant-numeric: tabular-nums; }
+  .treasury-server-icon {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    border: 0.5px solid color-mix(in srgb, var(--treasury-emerald) 24%, var(--border));
+    border-radius: 14px;
+    color: var(--treasury-emerald-bright);
+    background: color-mix(in srgb, var(--treasury-emerald-bright) 9%, var(--card-solid));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.3);
+  }
+
+  .treasury-server-ping {
+    display: inline-flex;
+    min-width: 72px;
+    min-height: 30px;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    border: 0.5px solid color-mix(in srgb, var(--success) 28%, var(--border));
+    border-radius: 999px;
+    padding-inline: 0.5rem;
+    color: var(--success);
+    background: color-mix(in srgb, var(--success) 8%, var(--card-solid));
+  }
+
+  .treasury-server-ping b { font-size: 0.65rem; font-weight: 760; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .treasury-config-copy { min-width: 0; }
   .treasury-config-copy > div { display: flex; align-items: center; gap: 0.35rem; }
   .treasury-config-protocol { display: inline-flex; min-height: 20px; align-items: center; border-radius: 999px; padding-inline: 0.45rem; color: #effbf5; background: linear-gradient(135deg, var(--treasury-emerald-bright), var(--treasury-emerald)); font-size: 0.53rem; font-weight: 780; text-transform: uppercase; }
@@ -1490,6 +1560,8 @@
 @keyframes treasury-wave { from { transform: translateX(-2.5%) rotate(-1deg) scaleY(0.82); } to { transform: translateX(2.5%) rotate(1deg) scaleY(1.08); } }
 @keyframes treasury-wave-back { from { transform: translateX(3%) rotate(1.5deg); } to { transform: translateX(-3%) rotate(-1.5deg); } }
 @keyframes treasury-bubble { 0% { transform: translateY(0) scale(0.7); opacity: 0; } 18% { opacity: 0.72; } 82% { opacity: 0.5; } 100% { transform: translateY(-105px) scale(1.16); opacity: 0; } }
+@keyframes treasury-empty-pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--destructive) 30%, transparent); } 70% { box-shadow: 0 0 0 14px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+@keyframes treasury-empty-border { 0%, 100% { box-shadow: var(--shadow); } 50% { box-shadow: var(--shadow), 0 0 0 3px color-mix(in srgb, var(--destructive) 8%, transparent); } }
 
 @media (hover: hover) {
   .treasury-refresh:hover { transform: translateY(-1px); box-shadow: var(--shadow-raised); }
@@ -1550,15 +1622,18 @@
   .treasury-section-title { align-items: flex-start; flex-direction: column; gap: 0.25rem; }
   .treasury-section-title p { padding-inline-start: 2.85rem; }
   .treasury-links-header { align-items: flex-start; }
-  .treasury-copy-all span { display: none; }
-  .treasury-copy-all { width: 42px; padding: 0; }
+  .treasury-copy-all { min-width: 122px; }
   .treasury-subscription-card { grid-template-columns: auto minmax(0, 1fr) auto; }
   .treasury-subscription-copy small { white-space: normal; }
-  .treasury-config-card { min-height: 98px; }
+  .treasury-config-card { min-height: 94px; grid-template-columns: auto minmax(0, 1fr) auto; }
+  .treasury-server-ping { grid-column: 2; justify-self: start; min-height: 26px; margin-top: -0.25rem; }
+  .treasury-config-card .treasury-link-actions { grid-column: 3; grid-row: 1 / 3; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .treasury-orbit::after { animation: none; }
   .treasury-liquid-wave,
-  .treasury-liquid-bubble { animation: none; }
+  .treasury-liquid-bubble,
+  .treasury-empty-state > span,
+  .treasury-reservoir.is-empty { animation: none; }
 }

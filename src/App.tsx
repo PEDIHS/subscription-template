@@ -2,6 +2,7 @@ import { useMemo, useState, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Activity,
+  AlertTriangle,
   Bell,
   CalendarDays,
   ChevronDown,
@@ -198,6 +199,7 @@ function App() {
   const remainingPercentage = !effectiveData.data_limit
     ? 100
     : Math.max(0, Math.min(100, 100 - usagePercentage));
+  const isTrafficEmpty = Boolean(effectiveData.data_limit) && remainingPercentage <= 0;
   const liquidHue = Math.round(remainingPercentage * 1.35);
   const liquidStyle = {
     '--liquid-level': `${remainingPercentage}%`,
@@ -306,13 +308,14 @@ function App() {
             </div>
           </section>
 
-          <section className="treasury-reservoir animate-fadeIn" style={liquidStyle} aria-labelledby="reservoir-title">
+          <section className={cn('treasury-reservoir animate-fadeIn', isTrafficEmpty && 'is-empty')} style={liquidStyle} aria-labelledby="reservoir-title">
             <div className="treasury-reservoir-copy">
               <div>
-                <span className="treasury-reservoir-icon" aria-hidden="true"><Database className="size-[18px]" /></span>
+                <span className="treasury-reservoir-icon" aria-hidden="true">
+                  {isTrafficEmpty ? <AlertTriangle className="size-[18px]" /> : <Database className="size-[18px]" />}
+                </span>
                 <div>
-                  <h2 id="reservoir-title">{isFa ? 'ذخیره باقی‌مانده' : 'Remaining reserve'}</h2>
-                  <p>{isFa ? 'سطح مخزن با مصرف شما کاهش پیدا می‌کند' : 'The reservoir falls as your usage grows'}</p>
+                  <h2 id="reservoir-title">{isFa ? 'حجم باقی‌مانده' : 'Remaining traffic'}</h2>
                 </div>
               </div>
               <strong dir="ltr">{remainingTraffic}</strong>
@@ -333,15 +336,19 @@ function App() {
                 <i className="treasury-liquid-bubble is-three" />
               </div>
               <div className="treasury-liquid-readout">
-                <strong>{Math.round(remainingPercentage)}<small>%</small></strong>
-                <span>{isFa ? 'باقی مانده' : 'remaining'}</span>
+                {isTrafficEmpty ? (
+                  <div className="treasury-empty-state">
+                    <span><AlertTriangle className="size-5" /></span>
+                    <strong>{isFa ? 'به اتمام رسیده' : 'Depleted'}</strong>
+                  </div>
+                ) : (
+                  <>
+                    <strong>{Math.round(remainingPercentage)}<small>%</small></strong>
+                    <span>{isFa ? 'باقی مانده' : 'remaining'}</span>
+                  </>
+                )}
               </div>
               <div className="treasury-liquid-scale" aria-hidden="true"><i /><i /><i /><i /><i /></div>
-            </div>
-            <div className="treasury-reservoir-legend" aria-hidden="true">
-              <span>{isFa ? 'بحرانی' : 'Critical'}</span>
-              <i />
-              <span>{isFa ? 'مطمئن' : 'Healthy'}</span>
             </div>
           </section>
 
