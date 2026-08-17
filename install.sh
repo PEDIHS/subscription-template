@@ -232,6 +232,7 @@ restart_pasarguard() {
 }
 
 if command -v pasarguard >/dev/null 2>&1; then
+  echo "در حال ری‌استارت PasarGuard؛ این مرحله ممکن است تا ۴۵ ثانیه طول بکشد..."
   if ! restart_pasarguard; then
     echo "Error: PasarGuard restart failed; restoring the previous configuration." >&2
     if [[ -n "${ROLLBACK_FILE}" && -f "${ROLLBACK_FILE}" ]]; then
