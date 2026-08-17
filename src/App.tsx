@@ -251,15 +251,23 @@ function App() {
             </button>
           </section>
 
-          <section className={cn('treasury-hero animate-fadeIn', statusStyle.tone)} aria-labelledby="account-status">
+          <section className={cn('treasury-hero animate-fadeIn', statusStyle.tone, isTrafficEmpty && 'is-traffic-empty')} aria-labelledby="account-status">
             <div className="treasury-hero-glow" aria-hidden="true" />
             <div className="treasury-hero-copy">
-              <span className="treasury-shield"><ShieldCheck className="size-7" /></span>
+              <span className="treasury-shield">
+                {isTrafficEmpty ? <AlertTriangle className="size-7" /> : <ShieldCheck className="size-7" />}
+              </span>
               <div id="account-status" className="treasury-status">
                 <span className={cn('size-2 rounded-full', statusStyle.dot)} aria-hidden="true" />
-                {normalizedStatus === 'active' && isFa ? 'متصل و فعال' : t(`status.${normalizedStatus}`)}
+                {isTrafficEmpty
+                  ? (isFa ? 'حجم به اتمام رسیده' : 'Traffic depleted')
+                  : (normalizedStatus === 'active' && isFa ? 'متصل و فعال' : t(`status.${normalizedStatus}`))}
               </div>
-              <p>{isFa ? 'اتصال امن شما آماده استفاده است' : 'Your secure connection is ready'}</p>
+              <p>
+                {isTrafficEmpty
+                  ? (isFa ? 'برای ادامه استفاده، حجم سرویس را تمدید کنید' : 'Renew your traffic to continue')
+                  : (isFa ? 'اتصال امن شما آماده استفاده است' : 'Your secure connection is ready')}
+              </p>
               <button type="button" className="treasury-quick-action" onClick={scrollToConnections}>
                 <Zap className="size-[18px] fill-current" />
                 {isFa ? 'اتصال سریع' : 'Quick connect'}

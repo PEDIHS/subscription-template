@@ -887,6 +887,60 @@
     filter: blur(48px);
   }
 
+  .treasury-hero.is-traffic-empty {
+    border-color: rgba(255, 112, 103, 0.58);
+    background:
+      radial-gradient(circle at 82% 12%, rgba(255, 91, 82, 0.25), transparent 34%),
+      radial-gradient(circle at 8% 92%, rgba(225, 47, 45, 0.18), transparent 36%),
+      linear-gradient(145deg, #671f22 0%, #43161a 52%, #250d11 100%);
+    box-shadow: 0 22px 70px rgba(105, 18, 23, 0.34), inset 0 1px 0 rgba(255, 191, 185, 0.18);
+    animation: treasury-hero-danger 2.8s ease-in-out infinite;
+  }
+
+  .treasury-hero.is-traffic-empty::after {
+    position: absolute;
+    z-index: 2;
+    top: -45%;
+    bottom: -45%;
+    width: 32%;
+    inset-inline-start: -42%;
+    transform: rotate(14deg);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.09), transparent);
+    content: "";
+    animation: treasury-danger-scan 3.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    pointer-events: none;
+  }
+
+  .treasury-hero.is-traffic-empty .treasury-hero-glow { background: rgba(255, 68, 61, 0.2); }
+  .treasury-hero.is-traffic-empty .treasury-shield {
+    border-color: rgba(255, 137, 128, 0.78);
+    color: #ff9a91;
+    background: rgba(255, 87, 78, 0.13);
+    box-shadow: 0 0 0 0 rgba(255, 92, 84, 0.28), inset 0 0 0 3px rgba(255, 133, 124, 0.08);
+    animation: treasury-danger-icon 1.9s ease-out infinite;
+  }
+  .treasury-hero.is-traffic-empty .treasury-status { color: #fff1ef; }
+  .treasury-hero.is-traffic-empty .treasury-status > span { background: #ff6259 !important; box-shadow: 0 0 0 5px rgba(255, 98, 89, 0.16); }
+  .treasury-hero.is-traffic-empty .treasury-orbit {
+    border-color: rgba(255, 124, 115, 0.38);
+    background:
+      radial-gradient(circle, rgba(70, 17, 22, 0.97) 58%, transparent 59%),
+      conic-gradient(from -90deg, #ff6a61 var(--progress), rgba(255, 105, 96, 0.13) 0);
+    box-shadow:
+      0 0 0 8px rgba(255, 90, 82, 0.07),
+      0 0 0 18px rgba(255, 90, 82, 0.035),
+      0 18px 60px rgba(31, 2, 5, 0.34),
+      inset 0 0 34px rgba(255, 94, 85, 0.08);
+    animation: treasury-danger-ring 2.2s ease-in-out infinite;
+  }
+  .treasury-hero.is-traffic-empty .treasury-orbit::before { border-color: rgba(255, 139, 130, 0.52); }
+  .treasury-hero.is-traffic-empty .treasury-orbit::after { border-color: rgba(255, 139, 130, 0.25); }
+  .treasury-hero.is-traffic-empty .treasury-orbit-center strong,
+  .treasury-hero.is-traffic-empty .treasury-expiry { color: #ff938b; }
+  .treasury-hero.is-traffic-empty .treasury-orbit-spark { background: #fff0ee; box-shadow: 0 0 5px #fff, 0 0 18px #ff635a, 0 0 34px #e43b36; }
+  .treasury-hero.is-traffic-empty .treasury-wave-soft { stroke: rgba(255, 81, 73, 0.22); }
+  .treasury-hero.is-traffic-empty .treasury-wave-line { stroke: rgba(255, 132, 123, 0.68); filter: drop-shadow(0 0 6px rgba(255, 85, 76, 0.7)); }
+
   .treasury-hero-copy {
     position: relative;
     z-index: 3;
@@ -1562,6 +1616,10 @@
 @keyframes treasury-bubble { 0% { transform: translateY(0) scale(0.7); opacity: 0; } 18% { opacity: 0.72; } 82% { opacity: 0.5; } 100% { transform: translateY(-105px) scale(1.16); opacity: 0; } }
 @keyframes treasury-empty-pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--destructive) 30%, transparent); } 70% { box-shadow: 0 0 0 14px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
 @keyframes treasury-empty-border { 0%, 100% { box-shadow: var(--shadow); } 50% { box-shadow: var(--shadow), 0 0 0 3px color-mix(in srgb, var(--destructive) 8%, transparent); } }
+@keyframes treasury-hero-danger { 0%, 100% { filter: saturate(1); } 50% { filter: saturate(1.13) brightness(1.025); } }
+@keyframes treasury-danger-scan { 0% { inset-inline-start: -42%; opacity: 0; } 18% { opacity: 1; } 74% { opacity: 0.7; } 100% { inset-inline-start: 125%; opacity: 0; } }
+@keyframes treasury-danger-icon { 0% { box-shadow: 0 0 0 0 rgba(255, 92, 84, 0.28), inset 0 0 0 3px rgba(255, 133, 124, 0.08); } 75% { box-shadow: 0 0 0 14px transparent, inset 0 0 0 3px rgba(255, 133, 124, 0.08); } 100% { box-shadow: 0 0 0 0 transparent, inset 0 0 0 3px rgba(255, 133, 124, 0.08); } }
+@keyframes treasury-danger-ring { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.025); } }
 
 @media (hover: hover) {
   .treasury-refresh:hover { transform: translateY(-1px); box-shadow: var(--shadow-raised); }
@@ -1635,5 +1693,9 @@
   .treasury-liquid-wave,
   .treasury-liquid-bubble,
   .treasury-empty-state > span,
-  .treasury-reservoir.is-empty { animation: none; }
+  .treasury-reservoir.is-empty,
+  .treasury-hero.is-traffic-empty,
+  .treasury-hero.is-traffic-empty::after,
+  .treasury-hero.is-traffic-empty .treasury-shield,
+  .treasury-hero.is-traffic-empty .treasury-orbit { animation: none; }
 }
