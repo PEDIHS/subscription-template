@@ -8,8 +8,7 @@ export function useLanguage() {
     // Update html lang and dir attributes when language changes
     document.documentElement.lang = i18n.language;
     document.documentElement.setAttribute('dir', i18n.dir());
-  }, [i18n.language]);
+  }, [i18n, i18n.language]);
 
   return { language: i18n.language, changeLanguage: i18n.changeLanguage };
 }
-

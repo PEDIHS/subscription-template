@@ -3,8 +3,8 @@
 PasarGuard 的响应式订阅页面模板。
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/PasarGuard/subscription-template/refs/heads/main/screenshots/en.png" alt="English UI" width="40%">
-  <img src="https://raw.githubusercontent.com/PasarGuard/subscription-template/refs/heads/main/screenshots/fa.png" alt="Persian UI" width="30%">
+  <img src="https://raw.githubusercontent.com/PEDIHS/subscription-template/refs/heads/main/screenshots/en.png" alt="English UI" width="55%">
+  <img src="https://raw.githubusercontent.com/PEDIHS/subscription-template/refs/heads/main/screenshots/fa.png" alt="Persian UI" width="22%">
 </p>
 
 ## 功能
@@ -30,7 +30,7 @@ PasarGuard 的响应式订阅页面模板。
 运行安装脚本（选择默认语言）：
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/PasarGuard/subscription-template/main/install.sh | sudo bash -s -- --lang zh
+curl -fsSL https://raw.githubusercontent.com/PEDIHS/subscription-template/main/install.sh | sudo bash -s -- --lang zh
 ```
 
 `--lang` 支持：`en`、`fa`、`zh`、`ru`
@@ -44,7 +44,7 @@ curl -fsSL https://raw.githubusercontent.com/PasarGuard/subscription-template/ma
 ```sh
 sudo mkdir -p /var/lib/pasarguard/templates/subscription
 sudo wget -O /var/lib/pasarguard/templates/subscription/index.html \
-https://github.com/PasarGuard/subscription-template/releases/latest/download/zh.html
+https://github.com/PEDIHS/subscription-template/releases/latest/download/zh.html
 ```
 
 2. 在 `/opt/pasarguard/.env` 中配置 PasarGuard：
@@ -63,7 +63,7 @@ pasarguard restart
 ## 从源码构建
 
 ```sh
-git clone https://github.com/PasarGuard/subscription-template.git
+git clone https://github.com/PEDIHS/subscription-template.git
 cd subscription-template
 bun install
 bun run build

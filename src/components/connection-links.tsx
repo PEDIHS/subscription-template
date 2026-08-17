@@ -1,6 +1,6 @@
 import { useState, memo, useMemo, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Copy, Check, ScanQrCode, Files, Download } from 'lucide-react';
+import { Copy, Check, ScanQrCode, Files, Download, Link2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
 import { parseLinks, type ParsedLink } from '@/lib/linkParser';
@@ -95,18 +95,15 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
   }, []);
 
   return (
-    <div className="space-y-3 animate-fadeIn">
-      <div className="flex items-center justify-between">
+    <section className="space-y-3 animate-fadeIn">
+      <div className="ios-panel-header">
         <h2 className="page-section-title flex items-center gap-2">
-          <span className="text-xl">🔗</span>
+          <Link2 className="size-5 text-primary" aria-hidden="true" />
           {t('config.title')}
         </h2>
         <button
           onClick={handleCopyAll}
-          className={`group cursor-pointer flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-lg ${copyAllSuccess
-              ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-primary/25'
-              : 'bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-primary/25'
-            }`}
+          className="ios-compact-button"
           title={copyAllSuccess ? t('apps.copyAllSuccess') : t('apps.copyAll')}
         >
           {copyAllSuccess ? (
@@ -120,17 +117,14 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
         </button>
       </div>
 
-      <div className="max-h-[400px] overflow-y-auto space-y-2">
+      <div className="ios-grouped-list max-h-[430px] overflow-y-auto">
         {/* Subscription Link */}
-        <div className="group relative p-3 rounded-lg border-2 border-primary/30 bg-primary/5 hover:border-primary/60 transition-all duration-200">
+        <div className="ios-list-row ios-list-row-featured">
           <div className="flex items-center gap-2">
             {/* Subscription Badge */}
-            <div className="page-badge px-2 py-0.5 rounded bg-primary text-primary-foreground shrink-0">
+            <div className="ios-protocol-badge">
               SUB
             </div>
-
-            {/* Emoji */}
-            <span className="text-sm">📱</span>
 
             {/* Name */}
             <div className="page-item-title flex-1 min-w-0 truncate">
@@ -141,10 +135,7 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
             <div className="flex gap-1 shrink-0">
               <button
                 onClick={handleCopySubscription}
-                className={`p-1.5 rounded transition-all cursor-pointer ${isCopied(subscriptionUrl)
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted hover:bg-primary hover:text-primary-foreground'
-                  }`}
+                className={`ios-row-action ${isCopied(subscriptionUrl) ? 'is-selected' : ''}`}
                 title={t('qr.copy')}
               >
                 {isCopied(subscriptionUrl) ? (
@@ -161,7 +152,7 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
                   emoji: '📱',
                   raw: subscriptionUrl
                 })}
-                className="p-1.5 rounded bg-muted hover:bg-secondary transition-all cursor-pointer"
+                className="ios-row-action"
                 title={t('qr.show')}
               >
                 <ScanQrCode className="w-3.5 h-3.5" />
@@ -169,18 +160,18 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
             </div>
           </div>
         </div>
-        <div className="space-y-2 xl:max-h-[400px] xl:overflow-y-auto xl:min-h-0">
+        <div>
           {parsedLinks.map((link, index) => {
             const copied = isCopied(`${link.raw}:config`);
 
             return (
               <div
                 key={index}
-                className="group relative p-3 rounded-lg border bg-card hover:border-primary/50 transition-all duration-200"
+                className="ios-list-row"
               >
                 <div className="flex items-center gap-2">
                   {/* Protocol Badge */}
-                  <div className="page-badge px-2 py-0.5 rounded bg-primary text-primary-foreground shrink-0">
+                  <div className="ios-protocol-badge">
                     {getProtocolBadge(link.protocol)}
                   </div>
 
@@ -199,7 +190,7 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
                     {getWireGuardDownloadPayload(link.raw) && (
                       <button
                         onClick={() => handleDownloadWireGuard(link)}
-                        className="p-1.5 rounded bg-muted hover:bg-secondary transition-all cursor-pointer"
+                        className="ios-row-action"
                         title={t('configActions.downloadWireGuard')}
                       >
                         <Download className="w-3.5 h-3.5" />
@@ -207,10 +198,7 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
                     )}
                     <button
                       onClick={() => handleCopy(link)}
-                      className={`p-1.5 rounded transition-all cursor-pointer ${copied
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-muted hover:bg-primary hover:text-primary-foreground'
-                        }`}
+                      className={`ios-row-action ${copied ? 'is-selected' : ''}`}
                       title={link.protocol === 'unknown' ? t('qr.copy') : t('configActions.copyConfig')}
                     >
                       {copied ? (
@@ -222,7 +210,7 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
 
                     <button
                       onClick={() => handleShowQR(link)}
-                      className="p-1.5 rounded bg-muted hover:bg-secondary transition-all cursor-pointer"
+                      className="ios-row-action"
                       title={t('qr.show')}
                     >
                       <ScanQrCode className="w-3.5 h-3.5" />
@@ -244,7 +232,6 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
           onOpenChange={setQrModalOpen}
         />
       )}
-    </div>
+    </section>
   );
 });
-

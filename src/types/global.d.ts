@@ -1,4 +1,4 @@
-import type { UserInfo, ConfigData, ChartData, AppClient } from "./user";
+import type { UserInfo, AppClient } from "./user";
 
 export interface InitialData {
   user?: UserInfo; // User data as structured object from template

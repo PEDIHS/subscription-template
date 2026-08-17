@@ -109,7 +109,7 @@ const CustomTrafficTooltip = React.memo(function CustomTrafficTooltip({
 
   return (
     <div
-      className={`min-w-[140px] rounded-lg border border-border bg-background p-3 text-sm shadow-xl ${isRTL ? 'text-right' : 'text-left'}`}
+      className={`min-w-[150px] rounded-xl border border-border bg-popover/95 p-3 text-sm shadow-xl backdrop-blur-xl ${isRTL ? 'text-right' : 'text-left'}`}
       dir={isRTL ? 'rtl' : 'ltr'}
     >
       <div className={`mb-2 text-sm font-semibold text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
@@ -166,7 +166,7 @@ export const TrafficChart = React.memo(function TrafficChart({
 
   return (
     <Card className="overflow-hidden">
-      <CardHeader className="flex flex-col gap-4 space-y-0 border-b pb-4">
+      <CardHeader className="flex flex-col gap-3 space-y-0 border-b pb-4">
         <div className="flex flex-wrap items-center justify-between w-full">
           <CardTitle className="page-section-title">{t('usage.title')}</CardTitle>
           <div className="flex items-center gap-2 text-sm font-semibold text-primary">
@@ -177,15 +177,14 @@ export const TrafficChart = React.memo(function TrafficChart({
             )}
           </div>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="ios-segmented-control" role="group" aria-label={t('usage.title')}>
           {timeRangeOptions.map((option) => (
             <button
+              type="button"
               key={option.value}
               onClick={() => onTimeRangeChange?.(option.value)}
-              className={`px-3 cursor-pointer py-1.5 text-sm font-medium rounded-lg transition-all ${timeRange === option.value
-                ? 'bg-primary text-primary-foreground shadow-sm'
-                : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                }`}
+              aria-pressed={timeRange === option.value}
+              className={`ios-segmented-item ${timeRange === option.value ? 'is-selected' : ''}`}
             >
               {option.label}
             </button>
@@ -223,7 +222,7 @@ export const TrafficChart = React.memo(function TrafficChart({
                       />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                  <CartesianGrid vertical={false} stroke="var(--separator)" strokeDasharray="2 4" />
                   <XAxis
                     dataKey="date"
                     tickLine={false}
@@ -231,7 +230,7 @@ export const TrafficChart = React.memo(function TrafficChart({
                     tickMargin={8}
                     minTickGap={16}
                     tick={{
-                      fill: 'hsl(var(--muted-foreground))',
+                      fill: 'var(--muted-foreground)',
                       fontSize: 11
                     }}
                     tickFormatter={(value) => {
@@ -299,4 +298,3 @@ export const TrafficChart = React.memo(function TrafficChart({
     </Card>
   )
 })
-

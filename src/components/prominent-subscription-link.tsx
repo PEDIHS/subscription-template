@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Copy, Check, ScanQrCode } from 'lucide-react';
+import { Copy, Check, ScanQrCode, Link2 } from 'lucide-react';
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
 import { QRModal } from '@/components/qr-modal';
 import { cn } from '@/lib/utils';
@@ -40,23 +40,21 @@ export const ProminentSubscriptionLink = memo(({ hasChart }: ProminentSubscripti
       "animate-fadeIn",
       hasChart ? 'order-2 lg:order-1' : ''
     )}>
-      <div className="space-y-3 animate-fadeIn">
-        <div className="flex items-center justify-between">
+      <div className="space-y-3">
+        <div className="ios-panel-header">
           <h2 className="page-section-title flex items-center gap-2">
-            <span className="text-xl">🔗</span>
+            <Link2 className="size-5 text-primary" aria-hidden="true" />
             {t('config.title')}
           </h2>
         </div>
         
-        <div className="group relative p-3 rounded-lg border-2 border-primary/30 bg-primary/5 hover:border-primary/60 transition-all duration-200">
+        <div className="ios-grouped-list">
+        <div className="ios-list-row ios-list-row-featured">
           <div className="flex items-center gap-2">
             {/* Subscription Badge */}
-            <div className="page-badge px-2 py-0.5 rounded bg-primary text-primary-foreground shrink-0">
+            <div className="ios-protocol-badge">
               SUB
             </div>
-            
-            {/* Emoji */}
-            <span className="text-sm">📱</span>
             
             {/* Name */}
             <div className="page-item-title flex-1 min-w-0 truncate">
@@ -67,11 +65,7 @@ export const ProminentSubscriptionLink = memo(({ hasChart }: ProminentSubscripti
             <div className="flex gap-1 shrink-0">
               <button
                 onClick={handleCopy}
-                className={`p-1.5 rounded transition-all cursor-pointer ${
-                  isCopied(subscriptionUrl)
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted hover:bg-primary hover:text-primary-foreground'
-                }`}
+                className={`ios-row-action ${isCopied(subscriptionUrl) ? 'is-selected' : ''}`}
                 title={t('qr.copy')}
               >
                 {isCopied(subscriptionUrl) ? (
@@ -83,13 +77,14 @@ export const ProminentSubscriptionLink = memo(({ hasChart }: ProminentSubscripti
               
               <button
                 onClick={handleShowQR}
-                className="p-1.5 rounded bg-muted hover:bg-secondary transition-all cursor-pointer"
+                className="ios-row-action"
                 title={t('qr.show')}
               >
                 <ScanQrCode className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
+        </div>
         </div>
       </div>
 
@@ -103,4 +98,3 @@ export const ProminentSubscriptionLink = memo(({ hasChart }: ProminentSubscripti
 });
 
 ProminentSubscriptionLink.displayName = 'ProminentSubscriptionLink';
-

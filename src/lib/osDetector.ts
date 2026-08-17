@@ -6,6 +6,10 @@
 export type OperatingSystem = 'windows' | 'macos' | 'linux' | 'android' | 'ios' | 'appletv' | 'androidtv' | 'unknown';
 export type AppPlatform = Exclude<OperatingSystem, 'unknown'> | 'other';
 
+interface NavigatorWithUserAgentData extends Navigator {
+  userAgentData?: { platform?: string };
+}
+
 const APP_PLATFORM_ORDER: AppPlatform[] = ['ios', 'android', 'windows', 'macos', 'linux', 'appletv', 'androidtv', 'other'];
 
 export function detectOS(): OperatingSystem {
@@ -18,7 +22,7 @@ export function detectOS(): OperatingSystem {
   const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   
   // Check for modern userAgentData API (more accurate)
-  const userAgentData = (navigator as any).userAgentData;
+  const userAgentData = (navigator as NavigatorWithUserAgentData).userAgentData;
   if (userAgentData?.platform) {
     const uaPlatform = userAgentData.platform.toLowerCase();
     if (uaPlatform.includes('tvos') || uaPlatform.includes('apple tv')) {

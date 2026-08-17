@@ -5,6 +5,8 @@ import { useApps } from '@/hooks/useUserData'
 import { cn } from '@/lib/utils'
 import { detectOS, getPlatformPriority, mapOSToPlatform } from '@/lib/osDetector'
 import { Download, DownloadCloud, Monitor, Tv } from 'lucide-react'
+import type { TFunction } from 'i18next'
+import type { AppClient } from '@/types/user'
 import {
     Accordion,
     AccordionContent,
@@ -54,7 +56,7 @@ const PLATFORM_ICONS: Record<string, React.ComponentType<PlatformIconProps>> = {
 export const AppsList = React.memo(function AppsList() {
     const { t, i18n } = useTranslation()
     const { apps, appsError, appsLoading } = useApps()
-    const appsList = apps ?? []
+    const appsList = React.useMemo(() => apps ?? [], [apps])
 
     const currentLang = i18n.language?.startsWith('fa')
         ? 'fa'
@@ -118,7 +120,7 @@ export const AppsList = React.memo(function AppsList() {
                 type="single"
                 collapsible
                 defaultValue={defaultOpenValue}
-                className="w-full space-y-3"
+                className="w-full space-y-2"
             >
                 {orderedPlatformKeys
                     .map((platformKey) => {
@@ -130,30 +132,25 @@ export const AppsList = React.memo(function AppsList() {
                             <AccordionItem
                                 key={platformKey}
                                 value={platformKey}
-                                className={cn(
-                                    "rounded-2xl border bg-card/50 overflow-hidden transition-all duration-300",
-                                    "hover:bg-card/80 hover:shadow-lg hover:shadow-primary/5",
-                                    "border-border/50",
-                                    isCurrentOS && "ring-1 ring-primary/30 bg-card/60"
-                                )}
+                                className={cn("ios-accordion-item overflow-hidden", isCurrentOS && "is-current")}
                             >
-                                <AccordionTrigger className="px-4 sm:px-6 py-4 sm:py-5 hover:no-underline items-center cursor-pointer data-[state=open]:bg-card/40 transition-colors">
+                                <AccordionTrigger className="min-h-16 px-4 py-3 hover:no-underline items-center cursor-pointer data-[state=open]:bg-muted/35 transition-colors">
                                     <div className="flex items-center gap-3 flex-1 text-left">
-                                        <IconComponent className="text-2xl sm:text-3xl text-foreground shrink-0" />
+                                        <span className="ios-platform-icon"><IconComponent className="size-5" /></span>
                                         <div className="flex items-center gap-2 flex-1 min-w-0">
                                             <h3 className="page-section-title">
                                                 {platformLabel}
                                             </h3>
                                             {isCurrentOS && (
-                                                <span className="page-badge px-2 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 shrink-0">
+                                                <span className="ios-current-badge">
                                                     {t('apps.currentOS')}
                                                 </span>
                                             )}
                                         </div>
                                     </div>
                                 </AccordionTrigger>
-                                <AccordionContent className="px-4 sm:px-6 pb-4 sm:pb-6 pt-0">
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 pt-2">
+                                <AccordionContent className="px-3 sm:px-4 pb-4 pt-0">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2 pt-2">
                                         {platformGroups[platformKey]!.map((app, idx) => {
                                             const desc = app.description?.[currentLang] || app.description?.en || ''
                                             // Get download links for current language, fallback to 'en', then all available
@@ -185,11 +182,11 @@ export const AppsList = React.memo(function AppsList() {
 
 // Minimal App Card Component
 const AppCard = React.memo(function AppCard({ app, desc, dlToShow, fallbackIcon: FallbackIcon, t }: {
-    app: any;
+    app: AppClient;
     desc: string;
-    dlToShow: any[];
+    dlToShow: AppClient['download_links'];
     fallbackIcon: React.ComponentType<PlatformIconProps>;
-    t: any;
+    t: TFunction;
 }) {
     const [iconLoadFailed, setIconLoadFailed] = React.useState(false)
 
@@ -198,30 +195,26 @@ const AppCard = React.memo(function AppCard({ app, desc, dlToShow, fallbackIcon:
     }, [app.icon_url])
 
     return (
-        <div className={cn(
-            "group relative rounded-lg border bg-background p-3 hover:shadow-md hover:shadow-primary/5 transition-all duration-200",
-            "flex flex-col gap-2",
-            app.recommended && 'ring-1 ring-primary/20'
-        )}>
+        <div className={cn("ios-app-card", app.recommended && 'is-recommended')}>
             {/* Header with icon and name */}
             <div className="flex items-center gap-2">
                 {app.icon_url && !iconLoadFailed ? (
                     <img
                         src={app.icon_url}
                         alt={app.name}
-                        className="w-8 h-8 rounded object-cover shrink-0"
+                        className="size-10 rounded-[0.65rem] object-cover shrink-0"
                         onError={() => setIconLoadFailed(true)}
                     />
                 ) : (
-                    <div className="w-8 h-8 rounded bg-muted flex items-center justify-center shrink-0">
-                        <FallbackIcon className="w-4.5 h-4.5 text-muted-foreground" />
+                    <div className="size-10 rounded-[0.65rem] bg-muted flex items-center justify-center shrink-0">
+                        <FallbackIcon className="size-5 text-muted-foreground" />
                     </div>
                 )}
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
                         <h4 className="page-item-title truncate">{app.name}</h4>
                         {app.recommended && (
-                            <span className="page-badge px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 shrink-0">
+                            <span className="ios-current-badge">
                                 {t('apps.recommended')}
                             </span>
                         )}
@@ -245,7 +238,7 @@ const AppCard = React.memo(function AppCard({ app, desc, dlToShow, fallbackIcon:
                         <a
                             key={i}
                             href={dl.url}
-                            className="text-sm px-2 py-1 rounded border hover:bg-muted inline-flex items-center gap-1 transition-colors"
+                            className="ios-app-button"
                             target="_blank"
                             rel="noreferrer"
                             title={dl.name}
@@ -259,7 +252,7 @@ const AppCard = React.memo(function AppCard({ app, desc, dlToShow, fallbackIcon:
                     {app.import_url && (
                         <a
                             href={app.import_url}
-                            className="text-sm px-2 py-1 rounded bg-primary text-primary-foreground hover:opacity-90 inline-flex items-center gap-1 transition-opacity"
+                            className="ios-app-button is-primary"
                             target="_blank"
                             rel="noreferrer"
                         >
@@ -272,4 +265,3 @@ const AppCard = React.memo(function AppCard({ app, desc, dlToShow, fallbackIcon:
         </div>
     )
 })
-

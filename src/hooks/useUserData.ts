@@ -103,14 +103,10 @@ export const useApps = () => {
     ? window.__INITIAL_DATA__?.apps
     : undefined;
   
-  // If we have initial data, use it directly without making network requests
-  if (initialAppsArray && initialAppsArray.length > 0) {
-    return { apps: initialAppsArray, appsError: null, appsLoading: false };
-  }
-
-  // Only make network request if no initial data is available
   const { data, error, isLoading } = useSWRImmutable<AppClient[]>(
-    `${getBaseUrl()}${window.location.pathname}/apps`,
+    initialAppsArray && initialAppsArray.length > 0
+      ? null
+      : `${getBaseUrl()}${window.location.pathname}/apps`,
     fetcher,
     {
       errorRetryCount: 2,
@@ -123,6 +119,10 @@ export const useApps = () => {
     }
   )
 
+  if (initialAppsArray && initialAppsArray.length > 0) {
+    return { apps: initialAppsArray, appsError: null, appsLoading: false };
+  }
+
   return { apps: data, appsError: error, appsLoading: isLoading }
 }
 
@@ -133,4 +133,3 @@ export const useSupportUrl = () => {
   
   return { supportUrl: supportUrl || null };
 };
-
