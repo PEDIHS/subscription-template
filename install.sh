@@ -189,8 +189,50 @@ else
   echo 'SUBSCRIPTION_PAGE_TEMPLATE="subscription/index.html"' >> "${ENV_FILE}"
 fi
 
+restart_pasarguard() {
+  local restart_log="${TEMP_DIR}/pasarguard-restart.log"
+  local restart_status=0
+
+  if command -v timeout >/dev/null 2>&1; then
+    timeout --signal=TERM --kill-after=5s 45s pasarguard restart > "${restart_log}" 2>&1 || restart_status=$?
+
+    if [[ "${restart_status}" -eq 0 ]]; then
+      return 0
+    fi
+
+    if [[ "${restart_status}" -eq 124 ]] && grep -Eqi 'Application startup complete|Uvicorn running on' "${restart_log}"; then
+      return 0
+    fi
+  else
+    pasarguard restart > "${restart_log}" 2>&1 &
+    local restart_pid=$!
+
+    for _ in $(seq 1 45); do
+      if grep -Eqi 'Application startup complete|Uvicorn running on' "${restart_log}"; then
+        kill -TERM "${restart_pid}" 2>/dev/null || true
+        wait "${restart_pid}" 2>/dev/null || true
+        return 0
+      fi
+
+      if ! kill -0 "${restart_pid}" 2>/dev/null; then
+        wait "${restart_pid}"
+        return $?
+      fi
+
+      sleep 1
+    done
+
+    kill -TERM "${restart_pid}" 2>/dev/null || true
+    wait "${restart_pid}" 2>/dev/null || true
+  fi
+
+  echo "PasarGuard restart output:" >&2
+  tail -n 30 "${restart_log}" >&2 || true
+  return 1
+}
+
 if command -v pasarguard >/dev/null 2>&1; then
-  if ! pasarguard restart; then
+  if ! restart_pasarguard; then
     echo "Error: PasarGuard restart failed; restoring the previous configuration." >&2
     if [[ -n "${ROLLBACK_FILE}" && -f "${ROLLBACK_FILE}" ]]; then
       mv -f "${ROLLBACK_FILE}" "${DEST_FILE}"
@@ -199,7 +241,11 @@ if command -v pasarguard >/dev/null 2>&1; then
     if [[ -f "${TEMP_DIR}/pasarguard.env" ]]; then
       cp -p "${TEMP_DIR}/pasarguard.env" "${ENV_FILE}"
     fi
-    pasarguard restart || true
+    if command -v timeout >/dev/null 2>&1; then
+      timeout --signal=TERM --kill-after=5s 45s pasarguard restart >/dev/null 2>&1 || true
+    else
+      pasarguard restart >/dev/null 2>&1 &
+    fi
     exit 1
   fi
   echo "✅ نصب قالب سفارشی (${LANG_CODE}, ${VERSION}) انجام شد و PasarGuard ری‌استارت گردید."
