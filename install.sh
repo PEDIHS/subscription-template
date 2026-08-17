@@ -140,14 +140,12 @@ if ! command -v wget >/dev/null 2>&1 && ! command -v curl >/dev/null 2>&1; then
   exit 1
 fi
 
-if ! download_file "${URL}" "${STAGED_FILE}"; then
-  if [[ "${VERSION}" == "latest" && "${LANG_CODE}" == "fa" ]]; then
-    echo "Release asset is not available yet; downloading the prebuilt Persian template..."
-    download_prebuilt_fallback
-  else
-    echo "Error: release asset could not be downloaded for ${LANG_CODE} (${VERSION})." >&2
-    exit 1
-  fi
+if [[ "${VERSION}" == "latest" && "${LANG_CODE}" == "fa" ]]; then
+  echo "Downloading the current prebuilt Persian template..."
+  download_prebuilt_fallback
+elif ! download_file "${URL}" "${STAGED_FILE}"; then
+  echo "Error: release asset could not be downloaded for ${LANG_CODE} (${VERSION})." >&2
+  exit 1
 fi
 
 if [[ ! -s "${STAGED_FILE}" ]] || ! grep -qi '<!doctype html' "${STAGED_FILE}"; then
